@@ -538,6 +538,17 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
       <div class="section-badge">Pricing</div>
       <h2 class="section-title">Transparent <span class="grad">Plans</span></h2>
       <p class="section-sub" style="margin:0 auto;text-align:center">No hidden fees, no surprises. Start for free.</p>
+      
+      <!-- Pricing Toggle -->
+      <div class="mt-10 flex items-center justify-center gap-4">
+        <span class="text-sm font-bold text-slate-400" id="monthly-label">Monthly</span>
+        <button type="button" onclick="togglePricing()" class="relative w-14 h-7 bg-slate-800 rounded-full border border-blue-500/30 transition-colors focus:outline-none group">
+          <div id="toggle-circle" class="absolute left-1 top-1 w-5 h-5 bg-blue-500 rounded-full transition-transform"></div>
+        </button>
+        <span class="text-sm font-medium text-slate-500 flex items-center gap-2" id="yearly-label">
+          Yearly <span class="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-full font-bold">Save 10%</span>
+        </span>
+      </div>
     </div>
     <div class="pricing-grid">
       @forelse($plans as $index => $plan)
@@ -548,12 +559,16 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
         <div class="price-name">{{ $plan->name }}</div>
         <div class="price-amount num">
             @if($plan->price > 0)
-                <sub>$</sub>{{ number_format($plan->price, 0) }}
+                <span class="plan-price" 
+                      data-monthly="{{ number_format($plan->price, 0) }}" 
+                      data-yearly="{{ number_format($plan->yearly_price ?? ($plan->price * 12 * 0.9), 0) }}">
+                  <sub>$</sub>{{ number_format($plan->price, 0) }}
+                </span>
             @else
                 FREE
             @endif
         </div>
-        <div class="price-period">per month / company</div>
+        <div class="price-period" id="period-{{ $plan->id }}">per month / company</div>
         <div class="price-divider"></div>
         <ul class="price-features">
           <li><i class="fa-solid fa-check"></i> Employees: {{ $plan->employee_limit ?? 'Unlimited' }}</li>
@@ -656,6 +671,37 @@ for(let i=0;i<120;i++){
     --d:${2+Math.random()*4}s;--del:${Math.random()*5}s;
     opacity:${.1+Math.random()*.5};width:${1+Math.random()*2}px;height:${1+Math.random()*2}px`;
   starsEl.appendChild(s);
+}
+
+// Pricing Toggle Logic
+let isYearly = false;
+function togglePricing() {
+  isYearly = !isYearly;
+  const circle = document.getElementById('toggle-circle');
+  const monthLabel = document.getElementById('monthly-label');
+  const yearLabel = document.getElementById('yearly-label');
+  const prices = document.querySelectorAll('.plan-price');
+  
+  if (isYearly) {
+    circle.style.transform = 'translateX(28px)';
+    monthLabel.classList.replace('text-slate-400', 'text-slate-600');
+    yearLabel.classList.replace('text-slate-500', 'text-slate-100');
+    prices.forEach(el => {
+      el.innerHTML = `<sub>$</sub>${el.dataset.yearly}`;
+      const periodEl = document.getElementById(`period-${el.parentElement.parentElement.querySelector('.price-name').innerText.toLowerCase().replace(/\s/g, '-')}`);
+      // Special case for period elements which use ID dynamically based on plan ID or name
+    });
+    // Simpler way to update all periods
+    document.querySelectorAll('.price-period').forEach(el => el.innerText = 'per year / company');
+  } else {
+    circle.style.transform = 'translateX(0)';
+    monthLabel.classList.replace('text-slate-600', 'text-slate-400');
+    yearLabel.classList.replace('text-slate-100', 'text-slate-500');
+    prices.forEach(el => {
+      el.innerHTML = `<sub>$</sub>${el.dataset.monthly}`;
+    });
+    document.querySelectorAll('.price-period').forEach(el => el.innerText = 'per month / company');
+  }
 }
 
 // Reveal on scroll

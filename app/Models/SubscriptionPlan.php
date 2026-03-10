@@ -13,6 +13,7 @@ class SubscriptionPlan extends Model
     protected $fillable = [
         'name',
         'price',
+        'yearly_price',
         'employee_limit',
         'branch_limit',
         'feature_list',
@@ -23,6 +24,7 @@ class SubscriptionPlan extends Model
     {
         return [
             'price' => 'decimal:2',
+            'yearly_price' => 'decimal:2',
             'feature_list' => 'array',
             'is_active' => 'boolean',
         ];

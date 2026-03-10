@@ -52,6 +52,19 @@
                         @error('price')<span class="text-rose-500 text-xs mt-1 block font-medium">{{ $message }}</span>@enderror
                     </div>
 
+                    <div>
+                        <label for="yearly_price" class="block text-sm font-semibold text-slate-700 mb-1.5">Yearly Price ($)</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <span class="text-slate-400 sm:text-sm font-medium">$</span>
+                            </div>
+                            <input type="number" step="0.01" name="yearly_price" id="yearly_price" value="{{ old('yearly_price', $subscriptionPlan->yearly_price) }}" required
+                                class="block w-full pl-8 pr-4 py-3 border border-slate-200 rounded-xl leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 sm:text-sm transition-all text-slate-900 font-bold"
+                                placeholder="0.00">
+                        </div>
+                        @error('yearly_price')<span class="text-rose-500 text-xs mt-1 block font-medium">{{ $message }}</span>@enderror
+                    </div>
+
                     <div class="flex items-center gap-3 pt-2">
                         <div class="relative flex items-center">
                             <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', $subscriptionPlan->is_active) ? 'checked' : '' }}

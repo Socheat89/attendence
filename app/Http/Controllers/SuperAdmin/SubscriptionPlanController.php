@@ -33,6 +33,7 @@ class SubscriptionPlanController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:subscription_plans,name',
             'price' => 'required|numeric|min:0',
+            'yearly_price' => 'required|numeric|min:0',
             'employee_limit' => 'nullable|integer|min:1',
             'branch_limit' => 'nullable|integer|min:1',
             'feature_list' => 'nullable|array',
@@ -64,6 +65,7 @@ class SubscriptionPlanController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:subscription_plans,name,' . $subscriptionPlan->id,
             'price' => 'required|numeric|min:0',
+            'yearly_price' => 'required|numeric|min:0',
             'employee_limit' => 'nullable|integer|min:1',
             'branch_limit' => 'nullable|integer|min:1',
             'feature_list' => 'nullable|array',

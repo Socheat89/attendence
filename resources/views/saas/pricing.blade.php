@@ -53,11 +53,11 @@
                     Choose the perfect plan for your business. Upgrade or downgrade at any time as your team grows.
                 </p>
                 <div class="flex items-center justify-center gap-4 pt-8">
-                    <span class="text-white font-bold text-sm">Monthly billing</span>
-                    <button class="w-14 h-7 bg-blue-600 rounded-full relative transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50">
-                        <span class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform"></span>
+                    <span class="text-white font-bold text-sm" id="monthly-label-saas">Monthly billing</span>
+                    <button type="button" onclick="toggleSaasPricing()" class="w-14 h-7 bg-blue-600/30 border border-blue-500/50 rounded-full relative transition-colors focus:outline-none ring-offset-slate-900 focus:ring-2 focus:ring-blue-500/50 group">
+                        <div id="toggle-circle-saas" class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform shadow-lg shadow-blue-500/50"></div>
                     </button>
-                    <span class="text-slate-400 font-medium text-sm flex items-center gap-2">Annual billing <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wide">Save 20%</span></span>
+                    <span class="text-slate-400 font-medium text-sm flex items-center gap-2" id="yearly-label-saas">Annual billing <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wide">Save 10%</span></span>
                 </div>
             </div>
 
@@ -89,8 +89,12 @@
                                     <span class="text-4xl md:text-5xl font-extrabold text-white">Free</span>
                                     <span class="{{ $textColor }} font-medium">/ 7 days</span>
                                 @else
-                                    <span class="text-4xl md:text-5xl font-extrabold text-white">${{ number_format($plan->price, 0) }}</span>
-                                    <span class="{{ $textColor }} font-medium">/ month</span>
+                                    <span class="text-4xl md:text-5xl font-extrabold text-white price-display-{{ $plan->id }}" 
+                                          data-monthly="{{ number_format($plan->price, 0) }}" 
+                                          data-yearly="{{ number_format($plan->yearly_price ?? ($plan->price * 12 * 0.9), 0) }}">
+                                        ${{ number_format($plan->price, 0) }}
+                                    </span>
+                                    <span class="{{ $textColor }} font-medium period-display-{{ $plan->id }}">/ month</span>
                                 @endif
                             </div>
                         </div>
@@ -172,5 +176,42 @@
         </div>
     </main>
 
+    <script>
+        let isSaasYearly = false;
+        function toggleSaasPricing() {
+            isSaasYearly = !isSaasYearly;
+            const circle = document.getElementById('toggle-circle-saas');
+            const monthlyLabel = document.getElementById('monthly-label-saas');
+            const yearlyLabel = document.getElementById('yearly-label-saas');
+            
+            if (isSaasYearly) {
+                circle.style.transform = 'translateX(28px)';
+                monthlyLabel.classList.replace('text-white', 'text-slate-400');
+                yearlyLabel.classList.replace('text-slate-400', 'text-white');
+                
+                @foreach($plans as $plan)
+                    @if($plan->price > 0)
+                        const price{{ $plan->id }} = document.querySelector('.price-display-{{ $plan->id }}');
+                        const period{{ $plan->id }} = document.querySelector('.period-display-{{ $plan->id }}');
+                        price{{ $plan->id }}.innerText = '$' + price{{ $plan->id }}.dataset.yearly;
+                        period{{ $plan->id }}.innerText = '/ year';
+                    @endif
+                @endforeach
+            } else {
+                circle.style.transform = 'translateX(0)';
+                monthlyLabel.classList.replace('text-slate-400', 'text-white');
+                yearlyLabel.classList.replace('text-white', 'text-slate-400');
+                
+                @foreach($plans as $plan)
+                    @if($plan->price > 0)
+                        const price{{ $plan->id }} = document.querySelector('.price-display-{{ $plan->id }}');
+                        const period{{ $plan->id }} = document.querySelector('.period-display-{{ $plan->id }}');
+                        price{{ $plan->id }}.innerText = '$' + price{{ $plan->id }}.dataset.monthly;
+                        period{{ $plan->id }}.innerText = '/ month';
+                    @endif
+                @endforeach
+            }
+        }
+    </script>
 </body>
 </html>

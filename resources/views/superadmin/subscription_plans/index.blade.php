@@ -63,7 +63,10 @@
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="text-[15px] font-bold text-slate-900">${{ number_format($plan->price, 2) }} <span class="text-xs font-medium text-slate-400">/mo</span></div>
+                        <div class="flex flex-col">
+                            <div class="text-[14px] font-bold text-slate-800">${{ number_format($plan->price, 2) }} <span class="text-[10px] font-medium text-slate-400">/mo</span></div>
+                            <div class="text-[14px] font-bold text-blue-600 mt-1">${{ number_format($plan->yearly_price, 2) }} <span class="text-[10px] font-medium text-blue-300">/yr</span></div>
+                        </div>
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
