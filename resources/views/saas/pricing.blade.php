@@ -52,13 +52,18 @@
                 <p class="text-lg md:text-xl text-slate-400 font-medium">
                     Choose the perfect plan for your business. Upgrade or downgrade at any time as your team grows.
                 </p>
-                <div class="flex flex-wrap items-center justify-center gap-2 pt-8">
-                    <button type="button" onclick="setSaasMonths(1)" class="saas-month-btn px-6 py-2.5 rounded-xl border border-blue-500/30 bg-blue-600 text-white font-bold text-sm transition-all shadow-lg shadow-blue-500/20" data-months="1">1 Month</button>
-                    <button type="button" onclick="setSaasMonths(3)" class="saas-month-btn px-6 py-2.5 rounded-xl border border-blue-500/30 bg-slate-800/50 text-slate-400 font-bold text-sm transition-all" data-months="3">3 Months</button>
-                    <button type="button" onclick="setSaasMonths(6)" class="saas-month-btn px-6 py-2.5 rounded-xl border border-blue-500/30 bg-slate-800/50 text-slate-400 font-bold text-sm transition-all" data-months="6">6 Months</button>
-                    <button type="button" onclick="setSaasMonths(12)" class="saas-month-btn px-6 py-2.5 rounded-xl border border-blue-500/30 bg-slate-800/50 text-slate-400 font-bold text-sm transition-all" data-months="12">
-                        1 Year <span class="bg-blue-400/20 text-blue-300 text-[10px] px-2 py-0.5 rounded-full ml-1 font-bold">-10%</span>
-                    </button>
+                <!-- Pricing Type Selector (Type Choose) -->
+                <div class="mt-8 flex justify-center">
+                    <div class="relative w-full max-w-[240px]">
+                        <select onchange="setSaasMonths(this.value)" 
+                                class="w-full bg-slate-800/50 border-2 border-blue-500/30 rounded-2xl px-6 py-3.5 font-bold text-slate-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none outline-none cursor-pointer">
+                            <option value="1" selected>Monthly Billing</option>
+                            <option value="12">Yearly Billing (-10%)</option>
+                        </select>
+                        <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-blue-400">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -178,36 +183,19 @@
     </main>
 
     <script>
-        let currentSaasMonths = 1;
         function setSaasMonths(months) {
-            currentSaasMonths = months;
-            const buttons = document.querySelectorAll('.saas-month-btn');
-            
-            buttons.forEach(btn => {
-                if (parseInt(btn.dataset.months) === months) {
-                    btn.className = 'saas-month-btn px-6 py-2.5 rounded-xl border border-blue-500/30 bg-blue-600 text-white font-bold text-sm transition-all shadow-lg shadow-blue-500/20';
-                } else {
-                    btn.className = 'saas-month-btn px-6 py-2.5 rounded-xl border border-blue-500/30 bg-slate-800/50 text-slate-400 font-bold text-sm transition-all';
-                }
-            });
-
             @foreach($plans as $plan)
                 @if($plan->price > 0)
                     const price{{ $plan->id }} = document.querySelector('.price-display-{{ $plan->id }}');
                     const period{{ $plan->id }} = document.querySelector('.period-display-{{ $plan->id }}');
                     
-                    const monthlyVal = parseFloat(price{{ $plan->id }}.dataset.monthly.replace(/,/g, ''));
-                    const yearlyVal = parseFloat(price{{ $plan->id }}.dataset.yearly.replace(/,/g, ''));
-                    
-                    let total;
-                    if (months >= 12) {
-                        total = (yearlyVal / 12) * months;
+                    if (parseInt(months) === 12) {
+                        price{{ $plan->id }}.innerText = '$' + price{{ $plan->id }}.dataset.yearly;
+                        period{{ $plan->id }}.innerText = '/ year';
                     } else {
-                        total = monthlyVal * months;
+                        price{{ $plan->id }}.innerText = '$' + price{{ $plan->id }}.dataset.monthly;
+                        period{{ $plan->id }}.innerText = '/ month';
                     }
-                    
-                    price{{ $plan->id }}.innerText = '$' + total.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
-                    period{{ $plan->id }}.innerText = `/ ${months} ${months > 1 ? 'months' : 'month'}`;
                 @endif
             @endforeach
         }

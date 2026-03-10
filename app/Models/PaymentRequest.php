@@ -10,6 +10,7 @@ class PaymentRequest extends Model
         'name',
         'contact',
         'subscription_plan_id',
+        'billing_cycle',
         'method',
         'status',
         'access_token',

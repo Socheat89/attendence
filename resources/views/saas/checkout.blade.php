@@ -58,35 +58,20 @@
                 <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Complete your purchase</h1>
                 <p class="text-slate-500 mb-6 font-medium">You are upgrading to the <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">{{ $plan->name }}</span> plan.</p>
 
-                <!-- Duration Selector -->
-                <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm mb-8">
-                    <label class="block text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                        <i class="fa-regular fa-calendar-check text-blue-500"></i> Select Subscription Duration
+                <!-- Billing Cycle Selector (Type Choose) -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mb-8">
+                    <label for="billing-cycle-select" class="block text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-blue-500"></i> Choose Subscription Period
                     </label>
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center border-2 border-slate-100 rounded-xl overflow-hidden bg-slate-50">
-                            <button type="button" onclick="changeMonths(-1)" class="px-4 py-3 hover:bg-slate-100 text-slate-500 transition-colors border-r border-slate-100">
-                                <i class="fa-solid fa-minus"></i>
-                            </button>
-                            <input type="number" id="input-months" value="1" min="1" max="60" readonly
-                                class="w-16 text-center bg-transparent font-extrabold text-slate-900 border-none focus:ring-0">
-                            <button type="button" onclick="changeMonths(1)" class="px-4 py-3 hover:bg-slate-100 text-slate-500 transition-colors border-l border-slate-100">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
+                    <div class="relative">
+                        <select id="billing-cycle-select" onchange="updateCycleSelection()" 
+                                class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3.5 font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none outline-none">
+                            <option value="monthly" selected>Monthly Billing</option>
+                            <option value="yearly">Yearly Billing (Save 10%)</option>
+                        </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-chevron-down"></i>
                         </div>
-                        <div class="flex-1">
-                            <span class="text-sm font-medium text-slate-500" id="duration-text">1 Month</span>
-                            <div id="discount-badge" class="hidden mt-1">
-                                <span class="bg-emerald-100 text-emerald-600 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">Yearly Discount -10% Applied</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-4 gap-2 mt-4">
-                        <button type="button" onclick="setMonths(1)" class="preset-btn py-2 rounded-lg text-xs font-bold border border-slate-200 hover:border-blue-500 transition-all bg-blue-50 text-blue-600 border-blue-500" data-months="1">1m</button>
-                        <button type="button" onclick="setMonths(3)" class="preset-btn py-2 rounded-lg text-xs font-bold border border-slate-200 hover:border-blue-500 transition-all text-slate-600" data-months="3">3m</button>
-                        <button type="button" onclick="setMonths(6)" class="preset-btn py-2 rounded-lg text-xs font-bold border border-slate-200 hover:border-blue-500 transition-all text-slate-600" data-months="6">6m</button>
-                        <button type="button" onclick="setMonths(12)" class="preset-btn py-2 rounded-lg text-xs font-bold border border-slate-200 hover:border-blue-500 transition-all text-slate-600" data-months="12">12m</button>
                     </div>
                 </div>
                 
@@ -297,56 +282,23 @@
     </style>
 
     <script>
-        let selectedMonths = 1;
+        let currentCycle = 'monthly';
         const monthlyPrice = {{ $plan->price }};
-        const baseYearlyPrice = {{ $plan->yearly_price ?? ($plan->price * 12 * 0.9) }};
-        const monthlyPriceForYear = baseYearlyPrice / 12;
+        const yearlyPrice = {{ $plan->yearly_price ?? ($plan->price * 12 * 0.9) }};
 
-        function changeMonths(delta) {
-            let val = parseInt(document.getElementById('input-months').value);
-            val += delta;
-            if (val < 1) val = 1;
-            if (val > 60) val = 60;
-            setMonths(val);
-        }
-
-        function setMonths(months) {
-            selectedMonths = months;
-            document.getElementById('input-months').value = months;
+        function updateCycleSelection() {
+            const select = document.getElementById('billing-cycle-select');
+            currentCycle = select.value;
             
-            // Update UI text
-            const durationText = document.getElementById('duration-text');
-            durationText.innerText = months + (months > 1 ? ' Months' : ' Month');
-            
-            // Update summary cycle
+            // Update summary cycle text
             const summaryCycle = document.getElementById('summary-cycle');
-            summaryCycle.innerText = months + (months > 1 ? ' Months' : ' Month');
+            summaryCycle.innerText = currentCycle.charAt(0).toUpperCase() + currentCycle.slice(1);
 
-            // Handle discount logic
-            const discountBadge = document.getElementById('discount-badge');
-            let unitPrice = monthlyPrice;
-            
-            if (months >= 12) {
-                discountBadge.classList.remove('hidden');
-                unitPrice = monthlyPriceForYear;
-            } else {
-                discountBadge.classList.add('hidden');
-            }
-
-            const totalPrice = unitPrice * months;
+            const totalPrice = (currentCycle === 'monthly') ? monthlyPrice : yearlyPrice;
             
             // Update all price elements
             document.querySelectorAll('.summary-price').forEach(el => {
                 el.innerText = '$' + totalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            });
-
-            // Update preset buttons styling
-            document.querySelectorAll('.preset-btn').forEach(btn => {
-                if (parseInt(btn.dataset.months) === months) {
-                    btn.className = 'preset-btn py-2 rounded-lg text-xs font-bold border transition-all bg-blue-50 text-blue-600 border-blue-500';
-                } else {
-                    btn.className = 'preset-btn py-2 rounded-lg text-xs font-bold border border-slate-200 hover:border-blue-500 transition-all text-slate-600';
-                }
             });
         }
 
@@ -434,9 +386,8 @@
                     method: method, 
                     name: name, 
                     contact: contact,
-                    billing_cycle: selectedMonths >= 12 ? 'yearly' : 'monthly',
-                    months: selectedMonths,
-                    total_amount: document.querySelector('.summary-price').innerText.replace('$', '').replace(',', '')
+                    billing_cycle: currentCycle,
+                    amount: document.querySelector('.summary-price').innerText.replace('$', '').replace(',', '')
                 })
             }).then(response => response.json())
             .then(data => {

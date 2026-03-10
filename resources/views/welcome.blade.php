@@ -539,14 +539,18 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
       <h2 class="section-title">Transparent <span class="grad">Plans</span></h2>
       <p class="section-sub" style="margin:0 auto;text-align:center">No hidden fees, no surprises. Start for free.</p>
       
-      <!-- Pricing Grid Selector -->
-      <div class="mt-8 flex flex-wrap justify-center gap-2">
-        <button type="button" onclick="setLandingMonths(1)" class="landing-month-btn px-6 py-2 rounded-full border border-blue-500/30 bg-blue-500 text-white font-bold text-sm transition-all" data-months="1">1 Month</button>
-        <button type="button" onclick="setLandingMonths(3)" class="landing-month-btn px-6 py-2 rounded-full border border-blue-500/30 bg-slate-800 text-slate-400 font-bold text-sm transition-all" data-months="3">3 Months</button>
-        <button type="button" onclick="setLandingMonths(6)" class="landing-month-btn px-6 py-2 rounded-full border border-blue-500/30 bg-slate-800 text-slate-400 font-bold text-sm transition-all" data-months="6">6 Months</button>
-        <button type="button" onclick="setLandingMonths(12)" class="landing-month-btn px-6 py-2 rounded-full border border-blue-500/30 bg-slate-800 text-slate-400 font-bold text-sm transition-all" data-months="12">
-            1 Year <span class="bg-blue-500/20 text-blue-400 text-[9px] px-1.5 py-0.5 rounded-full ml-1">-10%</span>
-        </button>
+      <!-- Pricing Type Selector -->
+      <div class="mt-8 flex justify-center">
+        <div class="relative w-full max-w-[200px]">
+          <select onchange="updateLandingCycle(this.value)" 
+                  class="w-full bg-slate-800 border-2 border-blue-500/30 rounded-full px-6 py-2.5 font-bold text-slate-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none outline-none cursor-pointer text-sm">
+            <option value="1" selected>Monthly Plan</option>
+            <option value="12">Yearly Plan (-10%)</option>
+          </select>
+          <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-blue-400">
+            <i class="fa-solid fa-chevron-down text-xs"></i>
+          </div>
+        </div>
       </div>
     </div>
     <div class="pricing-grid">
@@ -673,39 +677,20 @@ for(let i=0;i<120;i++){
 }
 
 // Pricing Selection Logic
-let currentLandingMonths = 1;
-function setLandingMonths(months) {
-  currentLandingMonths = months;
-  const buttons = document.querySelectorAll('.landing-month-btn');
+function updateLandingCycle(months) {
   const prices = document.querySelectorAll('.plan-price');
   const periods = document.querySelectorAll('.price-period');
   
-  buttons.forEach(btn => {
-    if (parseInt(btn.dataset.months) === months) {
-      btn.classList.replace('bg-slate-800', 'bg-blue-500');
-      btn.classList.replace('text-slate-400', 'text-white');
-    } else {
-      btn.classList.replace('bg-blue-500', 'bg-slate-800');
-      btn.classList.replace('text-white', 'text-slate-400');
-    }
-  });
-
   prices.forEach(el => {
-    const monthlyVal = parseFloat(el.dataset.monthly.replace(/,/g, ''));
-    const yearlyVal = parseFloat(el.dataset.yearly.replace(/,/g, ''));
-    
-    let total;
-    if (months >= 12) {
-      total = (yearlyVal / 12) * months;
+    if (parseInt(months) === 12) {
+      el.innerHTML = `<sub>$</sub>${el.dataset.yearly}`;
     } else {
-      total = monthlyVal * months;
+      el.innerHTML = `<sub>$</sub>${el.dataset.monthly}`;
     }
-    
-    el.innerHTML = `<sub>$</sub>${total.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
   });
 
   periods.forEach(el => {
-    el.innerText = `per ${months} ${months > 1 ? 'months' : 'month'} / company`;
+    el.innerText = parseInt(months) === 12 ? 'per year / company' : 'per month / company';
   });
 }
 

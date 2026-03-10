@@ -46,7 +46,8 @@ class RegistrationController extends Controller
         $method = $request->input('method', 'Unknown');
         $name = $request->input('name', 'Unknown User');
         $contact = $request->input('contact', 'No Contact');
-        $months = $request->input('months', 1);
+        $billingCycle = $request->input('billing_cycle', 'monthly');
+        $months = ($billingCycle === 'yearly') ? 12 : 1;
         $amount = $request->input('total_amount', number_format($plan->price, 2));
         $token = \Illuminate\Support\Str::random(40);
 
@@ -54,6 +55,7 @@ class RegistrationController extends Controller
             'name' => $name,
             'contact' => $contact,
             'subscription_plan_id' => $plan->id,
+            'billing_cycle' => $billingCycle,
             'method' => $method,
             'status' => 'pending',
             'access_token' => $token,
@@ -66,7 +68,7 @@ class RegistrationController extends Controller
             $message .= "🏢 *Business:* {$name}\n";
             $message .= "💰 *Amount:* \${$amount}\n";
             $message .= "📦 *Plan:* {$plan->name}\n";
-            $message .= "⏳ *Duration:* {$months} Months\n";
+            $message .= "⏳ *Duration:* " . ucfirst($billingCycle) . "\n";
             $message .= "💳 *Method:* {$method}\n";
             $message .= "🔑 *Ref:* `{$token}`\n";
             $message .= "⏰ *Time:* " . now()->format('Y-m-d H:i:s') . "\n\n";
