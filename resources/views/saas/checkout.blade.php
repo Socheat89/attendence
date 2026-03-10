@@ -56,7 +56,21 @@
                 </a>
                 
                 <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Complete your purchase</h1>
-                <p class="text-slate-500 mb-8 font-medium">You are upgrading to the <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">{{ $plan->name }}</span> plan.</p>
+                <p class="text-slate-500 mb-6 font-medium">You are upgrading to the <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">{{ $plan->name }}</span> plan.</p>
+
+                <!-- Billing Cycle Selector -->
+                <div class="bg-white rounded-2xl p-2 border border-slate-200 shadow-sm flex gap-2 mb-8">
+                    <button type="button" onclick="setBillingCycle('monthly')" id="cycle-monthly" 
+                        class="flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 bg-blue-600 text-white shadow-md">
+                        <i class="fa-regular fa-calendar"></i> Monthly
+                    </button>
+                    <button type="button" onclick="setBillingCycle('yearly')" id="cycle-yearly" 
+                        class="flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-50 group">
+                        <i class="fa-solid fa-calendar-check text-slate-400 group-hover:text-blue-500"></i> 
+                        Yearly 
+                        <span class="bg-emerald-100 text-emerald-600 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-tighter">-10%</span>
+                    </button>
+                </div>
                 
                 <div class="card-bg rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
                     <!-- Decor -->
@@ -69,7 +83,7 @@
                     <div class="space-y-4 mb-8">
                         <div class="flex justify-between items-center text-slate-300">
                             <span class="font-medium">Mekong CyberUnit System</span>
-                            <span class="font-bold text-white">${{ number_format($plan->price, 2) }}</span>
+                            <span class="font-bold text-white"><span class="summary-price">${{ number_format($plan->price, 2) }}</span></span>
                         </div>
                         <div class="flex justify-between items-center text-slate-400 text-sm">
                             <span>Subscription Plan</span>
@@ -77,7 +91,7 @@
                         </div>
                         <div class="flex justify-between items-center text-slate-400 text-sm">
                             <span>Billing Cycle</span>
-                            <span>Monthly</span>
+                            <span id="summary-cycle">Monthly</span>
                         </div>
                     </div>
                     
@@ -87,7 +101,7 @@
                             <p class="text-xs text-slate-500">Includes all applicable taxes.</p>
                         </div>
                         <div class="font-outfit text-4xl font-extrabold text-white">
-                            ${{ number_format($plan->price, 2) }}
+                            <span class="summary-price">${{ number_format($plan->price, 2) }}</span>
                         </div>
                     </div>
 
@@ -148,7 +162,7 @@
                     </div>
                     
                     <div class="text-center mb-4">
-                        <p class="font-outfit text-2xl font-black text-blue-600 mb-1">${{ number_format($plan->price, 2) }}</p>
+                        <p class="font-outfit text-2xl font-black text-blue-600 mb-1 summary-price">${{ number_format($plan->price, 2) }}</p>
                         <p class="text-xs font-mono text-slate-400">Order ID: MCU{{ mt_rand(100000, 999999) }}</p>
                     </div>
 
@@ -218,7 +232,7 @@
                         </p>
                         
                         <button type="submit" id="submit-btn" class="w-full py-4 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold rounded-xl shadow-lg shadow-blue-500/30 transition-all hover:shadow-blue-500/50 hover:-translate-y-0.5 outline-none focus:ring-2 focus:ring-blue-500/50 flex items-center justify-center gap-2 group relative overflow-hidden">
-                            <span id="btn-text">Pay ${{ number_format($plan->price, 2) }} & Continue</span>
+                            <span id="btn-text">Pay <span class="summary-price">${{ number_format($plan->price, 2) }}</span> & Continue</span>
                             <i id="btn-icon" class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                             
                             <!-- Loading spinner -->
@@ -265,6 +279,34 @@
     </style>
 
     <script>
+        let currentBillingCycle = 'monthly';
+        const monthlyPrice = {{ $plan->price }};
+        const yearlyPrice = {{ $plan->price * 12 * 0.9 }}; // 10% discount
+
+        function setBillingCycle(cycle) {
+            currentBillingCycle = cycle;
+            
+            const btnMonthly = document.getElementById('cycle-monthly');
+            const btnYearly = document.getElementById('cycle-yearly');
+            const summaryCycle = document.getElementById('summary-cycle');
+            const priceElements = document.querySelectorAll('.summary-price');
+            
+            const activeClass = 'flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 bg-blue-600 text-white shadow-md';
+            const inactiveClass = 'flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-50 group';
+            
+            if (cycle === 'monthly') {
+                btnMonthly.className = activeClass;
+                btnYearly.className = inactiveClass;
+                summaryCycle.innerText = 'Monthly';
+                priceElements.forEach(el => el.innerText = '$' + monthlyPrice.toFixed(2));
+            } else {
+                btnMonthly.className = inactiveClass;
+                btnYearly.className = activeClass;
+                summaryCycle.innerText = 'Yearly';
+                priceElements.forEach(el => el.innerText = '$' + yearlyPrice.toFixed(2));
+            }
+        }
+
         function switchMethod(method) {
             // Update tabs
             const tabKhqr = document.getElementById('tab-khqr');
@@ -345,7 +387,13 @@
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 },
-                body: JSON.stringify({ method: method, name: name, contact: contact })
+                body: JSON.stringify({ 
+                    method: method, 
+                    name: name, 
+                    contact: contact,
+                    billing_cycle: currentBillingCycle,
+                    amount: currentBillingCycle === 'monthly' ? monthlyPrice : yearlyPrice
+                })
             }).then(response => response.json())
             .then(data => {
                 if (data.success && data.token) {
