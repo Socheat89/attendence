@@ -14,10 +14,11 @@
     
     <style>
         :root {
-            --blue: #3b82f6; --indigo: #6366f1; --purple: #8b5cf6;
-            --dark: #040d1a; --dark2: #071428; --dark3: #0c1f38;
-            --card: #0e1e35; --border: rgba(59,130,246,0.18);
-            --text: #94a3b8; --white: #f0f6ff;
+            --blue: #3b82f6; --indigo: #6366f1; --purple: #a855f7;
+            --dark: #020617; --dark2: #070e25; --dark3: #0f172a;
+            --card: #0f172a; --border: rgba(148, 163, 184, 0.1);
+            --text: #94a3b8; --white: #f8fafc;
+            --blue-glow: rgba(59, 130, 246, 0.5);
         }
         body {
             font-family: 'Kantumruy Pro', sans-serif;
@@ -40,23 +41,36 @@
             color: var(--white);
             padding: 0.85rem 1rem 0.85rem 2.8rem;
             width: 100%;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
         }
         .input-field:focus {
             border-color: var(--blue);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
             background: rgba(12, 31, 56, 0.8);
         }
         
+        /* Stop Browser Autofill from breaking the theme */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: var(--white) !important;
+            transition: background-color 5000s ease-in-out 0s;
+            box-shadow: inset 0 0 20px 20px var(--dark3) !important;
+        }
+
         .label-text {
             color: var(--text);
-            font-size: 0.75rem;
-            font-weight: 700;
+            font-size: 0.7rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
-            display: block;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .btn-submit {
@@ -102,14 +116,23 @@
         /* Custom Radio */
         .plan-option input:checked + .plan-box {
             border-color: var(--blue);
-            background: rgba(59, 130, 246, 0.05);
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
         }
         .plan-box {
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1rem;
-            transition: all 0.2s;
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            background: rgba(255, 255, 255, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+        .plan-box:hover:not(.checked) {
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(255, 255, 255, 0.04);
         }
     </style>
 </head>
@@ -189,26 +212,35 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
-                                <label class="label-text">Company Name <span class="text-blue-500">*</span></label>
-                                <div class="relative">
-                                    <i class="fa-solid fa-building absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                <label class="label-text">
+                                    <i class="fa-solid fa-building text-[10px] text-blue-500/60"></i>
+                                    Company Name <span class="text-blue-500 ml-auto">*</span>
+                                </label>
+                                <div class="relative group">
+                                    <i class="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
                                     <input type="text" name="company_name" value="{{ old('company_name') }}" required autofocus class="input-field" placeholder="Full Legal Name">
                                 </div>
                                 @error('company_name')<p class="text-red-500 text-[10px] mt-1 font-bold">{{ $message }}</p>@enderror
                             </div>
 
                             <div>
-                                <label class="label-text">Business Email</label>
-                                <div class="relative">
-                                    <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                <label class="label-text">
+                                    <i class="fa-solid fa-envelope-open-text text-[10px] text-blue-500/60"></i>
+                                    Business Email
+                                </label>
+                                <div class="relative group">
+                                    <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
                                     <input type="email" name="company_email" value="{{ old('company_email') }}" class="input-field" placeholder="hq@company.com">
                                 </div>
                             </div>
 
                             <div>
-                                <label class="label-text">Contact Link</label>
-                                <div class="relative">
-                                    <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                <label class="label-text">
+                                    <i class="fa-solid fa-link text-[10px] text-blue-500/60"></i>
+                                    Contact Link
+                                </label>
+                                <div class="relative group">
+                                    <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
                                     <input type="text" name="phone" value="{{ old('phone') }}" class="input-field" placeholder="+855...">
                                 </div>
                             </div>
@@ -221,16 +253,22 @@
                                 <label class="plan-option">
                                     <input type="radio" name="billing_cycle" value="monthly" checked class="hidden">
                                     <div class="plan-box flex flex-col items-center text-center">
-                                        <span class="text-xs font-black text-white mb-1 uppercase">Monthly</span>
-                                        <span class="num text-blue-400 font-bold text-sm">${{ number_format($plan->price, 2) }}</span>
+                                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 mb-3">
+                                            <i class="fa-solid fa-calendar text-[10px]"></i>
+                                        </div>
+                                        <span class="text-[9px] font-black text-slate-400 mb-1 uppercase tracking-widest">Monthly Billing</span>
+                                        <span class="num text-white font-black text-xl">${{ number_format($plan->price, 2) }}</span>
                                     </div>
                                 </label>
                                 <label class="plan-option">
                                     <input type="radio" name="billing_cycle" value="yearly" class="hidden">
-                                    <div class="plan-box flex flex-col items-center text-center relative">
-                                        <span class="absolute -top-2 -right-2 bg-blue-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase">Value</span>
-                                        <span class="text-xs font-black text-white mb-1 uppercase">Yearly</span>
-                                        <span class="num text-blue-400 font-bold text-sm">${{ number_format($plan->yearly_price ?? ($plan->price * 12 * 0.9), 2) }}</span>
+                                    <div class="plan-box flex flex-col items-center text-center">
+                                        <span class="absolute -top-1 -right-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[7px] font-black px-2 py-1 rounded-bl-xl uppercase tracking-tighter">Save 10%</span>
+                                        <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 mb-3">
+                                            <i class="fa-solid fa-bolt text-[10px]"></i>
+                                        </div>
+                                        <span class="text-[9px] font-black text-slate-400 mb-1 uppercase tracking-widest">Annual Special</span>
+                                        <span class="num text-white font-black text-xl">${{ number_format($plan->yearly_price ?? ($plan->price * 12 * 0.9), 2) }}</span>
                                     </div>
                                 </label>
                             </div>
@@ -249,33 +287,45 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
-                                <label class="label-text">Administrator Full Name <span class="text-blue-500">*</span></label>
-                                <div class="relative">
-                                    <i class="fa-solid fa-user-tie absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                <label class="label-text">
+                                    <i class="fa-solid fa-user-gear text-[10px] text-blue-500/60"></i>
+                                    Administrator Full Name <span class="text-blue-500 ml-auto">*</span>
+                                </label>
+                                <div class="relative group">
+                                    <i class="fa-solid fa-user-tie absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
                                     <input type="text" name="name" value="{{ old('name') }}" required class="input-field" placeholder="Primary System Admin">
                                 </div>
                             </div>
 
                             <div class="md:col-span-2">
-                                <label class="label-text">Authentication Email <span class="text-blue-500">*</span></label>
-                                <div class="relative">
-                                    <i class="fa-solid fa-at absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                <label class="label-text">
+                                    <i class="fa-solid fa-id-badge text-[10px] text-blue-500/60"></i>
+                                    Authentication Email <span class="text-blue-500 ml-auto">*</span>
+                                </label>
+                                <div class="relative group">
+                                    <i class="fa-solid fa-at absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
                                     <input type="email" name="email" value="{{ old('email') }}" required class="input-field" placeholder="admin@domain.com">
                                 </div>
                             </div>
 
                             <div>
-                                <label class="label-text">Password <span class="text-blue-500">*</span></label>
-                                <div class="relative">
-                                    <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                <label class="label-text">
+                                    <i class="fa-solid fa-key text-[10px] text-blue-500/60"></i>
+                                    Password <span class="text-blue-500 ml-auto">*</span>
+                                </label>
+                                <div class="relative group">
+                                    <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
                                     <input type="password" name="password" required class="input-field" placeholder="••••••••">
                                 </div>
                             </div>
 
                             <div>
-                                <label class="label-text">Verify Password <span class="text-blue-500">*</span></label>
-                                <div class="relative">
-                                    <i class="fa-solid fa-shield-check absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                <label class="label-text">
+                                    <i class="fa-solid fa-shield-halved text-[10px] text-blue-500/60"></i>
+                                    Verify Password <span class="text-blue-500 ml-auto">*</span>
+                                </label>
+                                <div class="relative group">
+                                    <i class="fa-solid fa-shield-check absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
                                     <input type="password" name="password_confirmation" required class="input-field" placeholder="••••••••">
                                 </div>
                             </div>
