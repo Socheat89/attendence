@@ -85,8 +85,13 @@
                         <div class="mb-8">
                             <h3 class="text-xl font-bold {{ $titleColor }} mb-2">{{ $plan->name }}</h3>
                             <div class="flex items-baseline gap-1">
-                                <span class="text-4xl md:text-5xl font-extrabold text-white">${{ number_format($plan->price, 0) }}</span>
-                                <span class="{{ $textColor }} font-medium">/month</span>
+                                @if($plan->price <= 0)
+                                    <span class="text-4xl md:text-5xl font-extrabold text-white">Free</span>
+                                    <span class="{{ $textColor }} font-medium">/ 7 days</span>
+                                @else
+                                    <span class="text-4xl md:text-5xl font-extrabold text-white">${{ number_format($plan->price, 0) }}</span>
+                                    <span class="{{ $textColor }} font-medium">/ month</span>
+                                @endif
                             </div>
                         </div>
 
@@ -129,7 +134,11 @@
                         </div>
 
                         <a href="{{ route('register.company', $plan->id) }}" class="w-full block py-3.5 px-6 rounded-xl font-bold text-center transition-all flex items-center justify-center gap-2 group {{ $btnClass }}">
-                            Choose {{ $plan->name }}
+                            @if($plan->price <= 0)
+                                Start 7-Day Free Trial
+                            @else
+                                Choose {{ $plan->name }}
+                            @endif
                             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
                     </div>

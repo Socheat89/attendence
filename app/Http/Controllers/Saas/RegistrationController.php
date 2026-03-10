@@ -226,8 +226,22 @@ class RegistrationController extends Controller
             DB::beginTransaction();
 
             // 1. Create the Company with the selected Plan
-            // Setting expiry date 30 days from now (could be dynamic based on plan)
-            $expiryDate = now()->addDays(30);
+            // Setting expiry date based on plan and billing cycle
+            $billingCycle = $request->input('billing_cycle', 'monthly');
+            
+            if ($plan->price <= 0) {
+                // Free/Trial plan: 7 days as requested
+                $expiryDate = now()->addDays(7);
+                $billingCycle = 'trial';
+            } else {
+                // Paid plans
+                if ($billingCycle === 'yearly') {
+                    $expiryDate = now()->addYear();
+                } else {
+                    $expiryDate = now()->addMonth();
+                    $billingCycle = 'monthly'; // Ensure default
+                }
+            }
             
             // For a newly registered company, TenantScope is not yet active since no user is logged in.
             // We use Company::withoutGlobalScopes() just to be safe, though not strictly required manually.
@@ -237,6 +251,7 @@ class RegistrationController extends Controller
                 'phone' => $request->phone,
                 'address' => $request->address,
                 'subscription_plan_id' => $plan->id,
+                'billing_cycle' => $billingCycle,
                 'status' => 'active',
                 'expiry_date' => $expiryDate,
             ]);

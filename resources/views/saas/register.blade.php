@@ -41,7 +41,13 @@
                 Your isolated <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">workspace</span> is almost ready.
             </h1>
             <p class="text-xl text-slate-400 font-medium max-w-md">
-                You've selected the <strong class="text-white">{{ $plan->name }}</strong> plan. Register your company below, and our engine will instantly deploy your dedicated database schema and admin portal.
+                You've selected the <strong class="text-white">{{ $plan->name }}</strong> plan. 
+                @if($plan->price <= 0)
+                    This is a 7-day trial plan to get you started.
+                @else
+                    Register your company below to start your premium experience.
+                @endif
+                Register your company below, and our engine will instantly deploy your dedicated database schema and admin portal.
             </p>
 
             <div class="mt-12 flex items-center gap-4">
@@ -115,6 +121,32 @@
                             @error('phone')<span class="text-rose-500 text-xs mt-1 block font-medium">{{ $message }}</span>@enderror
                         </div>
                     </div>
+                    @if($plan->price > 0)
+                    <div class="pt-2">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2.5">Billing Cycle <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="relative flex flex-col p-4 border-2 border-slate-100 rounded-2xl cursor-pointer hover:bg-slate-50 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/50 group">
+                                <input type="radio" name="billing_cycle" value="monthly" checked class="sr-only">
+                                <span class="text-sm font-bold text-slate-900 mb-0.5">Monthly</span>
+                                <span class="text-xs text-slate-500 font-medium">${{ number_format($plan->price, 2) }}/mo</span>
+                                <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-slate-200 group-has-[:checked]:border-blue-600 group-has-[:checked]:bg-blue-600 flex items-center justify-center transition-all">
+                                    <div class="w-2 h-2 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
+                                </div>
+                            </label>
+                            <label class="relative flex flex-col p-4 border-2 border-slate-100 rounded-2xl cursor-pointer hover:bg-slate-50 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/50 group">
+                                <input type="radio" name="billing_cycle" value="yearly" class="sr-only">
+                                <span class="text-sm font-bold text-slate-900 mb-0.5">Yearly</span>
+                                <span class="text-xs text-slate-500 font-medium">${{ number_format($plan->price * 12 * 0.9, 2) }}/yr</span>
+                                <span class="absolute -top-2 -right-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">Save 10%</span>
+                                <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-slate-200 group-has-[:checked]:border-blue-600 group-has-[:checked]:bg-blue-600 flex items-center justify-center transition-all">
+                                    <div class="w-2 h-2 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    @else
+                        <input type="hidden" name="billing_cycle" value="trial">
+                    @endif
                 </div>
 
                 <!-- Admin Info -->

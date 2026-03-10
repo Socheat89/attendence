@@ -13,6 +13,7 @@ class Company extends Model
     protected $fillable = [
         'name',
         'subscription_plan_id',
+        'billing_cycle',
         'status',
         'expiry_date',
         'monthly_price',
