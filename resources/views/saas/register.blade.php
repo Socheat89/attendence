@@ -15,46 +15,100 @@
     <style>
         :root {
             --blue: #3b82f6; --indigo: #6366f1; --purple: #a855f7;
-            --dark: #020617; --dark2: #070e25; --dark3: #0f172a;
-            --card: #0f172a; --border: rgba(148, 163, 184, 0.1);
+            --dark: #030712; --dark2: #090e1b; --dark3: #0f172a;
+            --card: rgba(15, 23, 42, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
             --text: #94a3b8; --white: #f8fafc;
-            --blue-glow: rgba(59, 130, 246, 0.5);
+            --blue-glow: rgba(59, 130, 246, 0.3);
+            --purple-glow: rgba(168, 85, 247, 0.2);
         }
         body {
             font-family: 'Kantumruy Pro', sans-serif;
             background: var(--dark);
             color: var(--text);
             margin: 0; min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
         }
         .num { font-family: 'Outfit', sans-serif; }
         
+        /* ── BACKGROUND ANIMATIONS ── */
+        .bg-glow {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; background: var(--dark);
+        }
+        .glow-1 {
+            position: absolute; top: -20%; left: -10%; width: 60%; height: 70%;
+            background: radial-gradient(circle, var(--blue-glow) 0%, transparent 70%);
+            animation: drift 15s ease-in-out infinite alternate;
+        }
+        .glow-2 {
+            position: absolute; bottom: -20%; right: -10%; width: 70%; height: 80%;
+            background: radial-gradient(circle, var(--purple-glow) 0%, transparent 70%);
+            animation: drift 20s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, 50px) scale(1.1); }
+        }
+
         .grad-text {
             background: linear-gradient(90deg, var(--blue), var(--purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .input-field {
-            background: rgba(12, 31, 56, 0.5);
+        /* ── GLASS CARD ── */
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--white);
-            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            border-radius: 32px;
             width: 100%;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            outline: none;
+            max-width: 900px;
+            padding: 3.5rem;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .input-field:focus {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group {
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+        .input-group:focus-within {
             border-color: var(--blue);
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-            background: rgba(12, 31, 56, 0.8);
+            background: rgba(0, 0, 0, 0.4);
         }
-        
+        .input-field {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            padding: 1.1rem 1.1rem 1.1rem 3.2rem;
+            width: 100%;
+            outline: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .input-icon {
+            position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%);
+            color: #475569; transition: color 0.3s;
+        }
+        .input-group:focus-within .input-icon { color: var(--blue); }
+
         /* Stop Browser Autofill from breaking the theme */
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover, 
-        input:-webkit-autofill:focus, 
-        input:-webkit-autofill:active {
+        input:-webkit-autofill {
             -webkit-background-clip: text;
             -webkit-text-fill-color: var(--white) !important;
             transition: background-color 5000s ease-in-out 0s;
@@ -63,288 +117,249 @@
 
         .label-text {
             color: var(--text);
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.6rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            letter-spacing: 0.12em;
+            margin-bottom: 0.75rem;
+            display: flex; align-items: center; gap: 0.6rem;
         }
 
         .btn-submit {
             background: linear-gradient(135deg, var(--blue), var(--indigo));
             color: white;
-            padding: 1rem;
-            border-radius: 12px;
-            font-weight: 800;
+            padding: 1.2rem;
+            border-radius: 16px;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             width: 100%;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
-            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.6);
         }
 
-        .card {
-            background: var(--card);
+        .step-pill {
+            padding: 0.5rem 1.2rem;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            color: var(--text);
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .step-pill.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--blue);
+            color: var(--white);
         }
 
-        .left-panel {
-            background: radial-gradient(circle at top left, var(--dark2), var(--dark));
-        }
-        
-        .step-circle {
-            width: 28px; height: 28px;
-            border-radius: 8px;
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--blue);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem; font-weight: 800;
-        }
-        
-        /* Custom Radio */
         .plan-option input:checked + .plan-box {
             border-color: var(--blue);
-            background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2);
-            transform: translateY(-2px);
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
+            box-shadow: 0 15px 35px -5px rgba(59, 130, 246, 0.3);
+            transform: translateY(-4px);
         }
         .plan-box {
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 1.5rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
             background: rgba(255, 255, 255, 0.02);
             position: relative;
-            overflow: hidden;
-        }
-        .plan-box:hover:not(.checked) {
-            border-color: rgba(59, 130, 246, 0.3);
-            background: rgba(255, 255, 255, 0.04);
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <div class="min-h-screen flex flex-col lg:flex-row">
-        
-        <!-- Left Visual -->
-        <div class="hidden lg:flex lg:w-5/12 left-panel relative flex-col justify-between p-12 overflow-hidden border-r border-white/5">
-            <!-- Glows -->
-            <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/10 blur-[100px] rounded-full"></div>
-            <div class="absolute bottom-0 right-0 w-80 h-80 bg-purple-600/10 blur-[100px] rounded-full"></div>
+    <div class="bg-glow">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
 
-            <div class="relative z-10">
-                <a href="/" class="logo" style="text-decoration:none">
-                    <div style="display:flex;align-items:center;gap:0.75rem">
-                        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--indigo));display:flex;align-items:center;justify-content:center;color:white;box-shadow:0 0 20px rgba(59,130,246,.4)">
-                            <i class="fa-solid fa-microchip"></i>
-                        </div>
-                        <span style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:var(--white)">Mekong <span class="grad-text">CyberUnit</span></span>
-                    </div>
-                </a>
-            </div>
-
-            <div class="relative z-10">
-                <div class="inline-block px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-6">
-                    Autonomous Deployment Ready
+    <div class="glass-card">
+        <!-- Brand Header -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-12 pb-8 border-b border-white/5">
+            <a href="/" class="logo flex items-center gap-3 no-underline">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-microchip text-lg"></i>
                 </div>
-                <h1 class="text-5xl font-black text-white leading-tight mb-8">
-                    Elevate your <br><span class="grad-text">Workforce</span> <br>Intelligence.
-                </h1>
-                
-                <div class="bg-white/5 border border-white/5 backdrop-blur-md rounded-2xl p-6 mb-12 flex items-start gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
-                        <i class="fa-solid fa-bolt"></i>
+                <span class="font-['Outfit'] text-2xl font-black text-white">Mekong <span class="grad-text">CyberUnit</span></span>
+            </a>
+            <div class="flex items-center gap-3">
+                <div class="step-pill active">
+                    <span class="num">01</span> Workspace
+                </div>
+                <div class="w-4 h-px bg-white/10"></div>
+                <div class="step-pill">
+                    <span class="num">02</span> Credentials
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-10 text-center md:text-left">
+            <h2 class="text-4xl font-black text-white mb-3">Setup your <span class="grad-text">Workspace</span></h2>
+            <p class="text-slate-400 font-medium max-w-lg">Enter your organizational parameters below to initialize your dedicated HRM environment on our secure server.</p>
+        </div>
+
+        @if(session('error'))
+        <div class="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-xs font-bold animate-pulse">
+            <i class="fa-solid fa-circle-exclamation mr-2"></i> {{ session('error') }}
+        </div>
+        @endif
+
+        <form action="{{ route('register.company.store', $plan->id) }}" method="POST" class="space-y-10">
+            @csrf
+
+            <!-- Section 1: Company Dynamics -->
+            <div class="space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="label-text">
+                            <i class="fa-solid fa-building text-blue-500/60"></i>
+                            Legal Company Entity <span class="text-blue-500 ml-auto">*</span>
+                        </label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-id-card input-icon"></i>
+                            <input type="text" name="company_name" value="{{ old('company_name') }}" required autofocus class="input-field" placeholder="e.g. Acme Corporation Co., Ltd">
+                        </div>
+                        @error('company_name')<p class="text-red-500 text-[10px] mt-1 font-bold">{{ $message }}</p>@enderror
                     </div>
+
                     <div>
-                        <h4 class="text-white font-bold text-sm mb-1">Configuration: {{ $plan->name }}</h4>
-                        <p class="text-slate-400 text-xs leading-relaxed">System parameters are optimized for high-scale enterprise operations.</p>
+                        <label class="label-text">
+                            <i class="fa-solid fa-envelope-open-text text-blue-500/60"></i>
+                            Corporate Email
+                        </label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-envelope input-icon"></i>
+                            <input type="email" name="company_email" value="{{ old('company_email') }}" class="input-field" placeholder="desk@company.com">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="label-text">
+                            <i class="fa-solid fa-link text-blue-500/60"></i>
+                            Contact Hotline
+                        </label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-phone input-icon"></i>
+                            <input type="text" name="phone" value="{{ old('phone') }}" class="input-field" placeholder="+855 000 000">
+                        </div>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <div class="flex -space-x-2">
-                        <img src="https://ui-avatars.com/api/?name=JS&background=3b82f6&color=fff" class="w-10 h-10 rounded-full border-2 border-dark shadow-xl">
-                        <img src="https://ui-avatars.com/api/?name=MK&background=6366f1&color=fff" class="w-10 h-10 rounded-full border-2 border-dark shadow-xl">
-                        <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-dark flex items-center justify-center text-[10px] font-bold text-white">1k+</div>
+                @if($plan->price > 0)
+                <div>
+                    <label class="label-text">
+                        <i class="fa-solid fa-credit-card text-blue-500/60"></i>
+                        Billing Protocol
+                    </label>
+                    <div class="grid grid-cols-2 gap-5">
+                        <label class="plan-option">
+                            <input type="radio" name="billing_cycle" value="monthly" checked class="hidden">
+                            <div class="plan-box group">
+                                <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 mb-4 transition-transform group-hover:scale-110">
+                                    <i class="fa-solid fa-calendar-day"></i>
+                                </div>
+                                <span class="text-[10px] font-black text-slate-500 mb-1 uppercase tracking-widest block">Standard</span>
+                                <span class="num text-white font-black text-2xl">${{ number_format($plan->price, 0) }}<span class="text-xs text-slate-500 font-medium">/mo</span></span>
+                            </div>
+                        </label>
+                        <label class="plan-option">
+                            <input type="radio" name="billing_cycle" value="yearly" class="hidden">
+                            <div class="plan-box group">
+                                <span class="absolute top-0 right-0 bg-gradient-to-l from-blue-600 to-indigo-600 text-white text-[8px] font-black px-3 py-1.5 rounded-bl-2xl uppercase tracking-tighter">Recommended</span>
+                                <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4 transition-transform group-hover:scale-110">
+                                    <i class="fa-solid fa-bolt-lightning"></i>
+                                </div>
+                                <span class="text-[10px] font-black text-slate-500 mb-1 uppercase tracking-widest block">Annual Elite</span>
+                                <span class="num text-white font-black text-2xl">${{ number_format($plan->yearly_price ?? ($plan->price * 12 * 0.9), 0) }}<span class="text-xs text-slate-500 font-medium">/yr</span></span>
+                            </div>
+                        </label>
                     </div>
-                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Trusted by Industry Leaders</p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Right Side: Form -->
-        <div class="flex-1 p-6 md:p-12 lg:p-20 overflow-y-auto flex items-center justify-center">
-            <div class="w-full max-w-2xl mx-auto">
-                <div class="mb-10">
-                    <h2 class="text-3xl font-black text-white mb-2">Create Workspace</h2>
-                    <p class="text-slate-400 font-medium">Provision your dedicated HRM environment below.</p>
-                </div>
-
-                @if(session('error'))
-                <div class="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs font-bold">
-                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> {{ session('error') }}
-                </div>
+                @else
+                    <input type="hidden" name="billing_cycle" value="trial">
                 @endif
-
-                <form action="{{ route('register.company.store', $plan->id) }}" method="POST" class="space-y-8">
-                    @csrf
-
-                    <!-- Group 1: Company -->
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-3">
-                            <div class="step-circle">1</div>
-                            <h3 class="text-xs font-black text-white uppercase tracking-widest">Company Protocol</h3>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div class="md:col-span-2">
-                                <label class="label-text">
-                                    <i class="fa-solid fa-building text-[10px] text-blue-500/60"></i>
-                                    Company Name <span class="text-blue-500 ml-auto">*</span>
-                                </label>
-                                <div class="relative group">
-                                    <i class="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
-                                    <input type="text" name="company_name" value="{{ old('company_name') }}" required autofocus class="input-field" placeholder="Full Legal Name">
-                                </div>
-                                @error('company_name')<p class="text-red-500 text-[10px] mt-1 font-bold">{{ $message }}</p>@enderror
-                            </div>
-
-                            <div>
-                                <label class="label-text">
-                                    <i class="fa-solid fa-envelope-open-text text-[10px] text-blue-500/60"></i>
-                                    Business Email
-                                </label>
-                                <div class="relative group">
-                                    <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
-                                    <input type="email" name="company_email" value="{{ old('company_email') }}" class="input-field" placeholder="hq@company.com">
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="label-text">
-                                    <i class="fa-solid fa-link text-[10px] text-blue-500/60"></i>
-                                    Contact Link
-                                </label>
-                                <div class="relative group">
-                                    <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
-                                    <input type="text" name="phone" value="{{ old('phone') }}" class="input-field" placeholder="+855...">
-                                </div>
-                            </div>
-                        </div>
-
-                        @if($plan->price > 0)
-                        <div>
-                            <label class="label-text">Billing Frequency</label>
-                            <div class="grid grid-cols-2 gap-4">
-                                <label class="plan-option">
-                                    <input type="radio" name="billing_cycle" value="monthly" checked class="hidden">
-                                    <div class="plan-box flex flex-col items-center text-center">
-                                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 mb-3">
-                                            <i class="fa-solid fa-calendar text-[10px]"></i>
-                                        </div>
-                                        <span class="text-[9px] font-black text-slate-400 mb-1 uppercase tracking-widest">Monthly Billing</span>
-                                        <span class="num text-white font-black text-xl">${{ number_format($plan->price, 2) }}</span>
-                                    </div>
-                                </label>
-                                <label class="plan-option">
-                                    <input type="radio" name="billing_cycle" value="yearly" class="hidden">
-                                    <div class="plan-box flex flex-col items-center text-center">
-                                        <span class="absolute -top-1 -right-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[7px] font-black px-2 py-1 rounded-bl-xl uppercase tracking-tighter">Save 10%</span>
-                                        <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 mb-3">
-                                            <i class="fa-solid fa-bolt text-[10px]"></i>
-                                        </div>
-                                        <span class="text-[9px] font-black text-slate-400 mb-1 uppercase tracking-widest">Annual Special</span>
-                                        <span class="num text-white font-black text-xl">${{ number_format($plan->yearly_price ?? ($plan->price * 12 * 0.9), 2) }}</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                        @else
-                            <input type="hidden" name="billing_cycle" value="trial">
-                        @endif
-                    </div>
-
-                    <!-- Group 2: Admin -->
-                    <div class="space-y-6 pt-6 border-t border-white/5">
-                        <div class="flex items-center gap-3">
-                            <div class="step-circle">2</div>
-                            <h3 class="text-xs font-black text-white uppercase tracking-widest">Access Credentials</h3>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div class="md:col-span-2">
-                                <label class="label-text">
-                                    <i class="fa-solid fa-user-gear text-[10px] text-blue-500/60"></i>
-                                    Administrator Full Name <span class="text-blue-500 ml-auto">*</span>
-                                </label>
-                                <div class="relative group">
-                                    <i class="fa-solid fa-user-tie absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
-                                    <input type="text" name="name" value="{{ old('name') }}" required class="input-field" placeholder="Primary System Admin">
-                                </div>
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label class="label-text">
-                                    <i class="fa-solid fa-id-badge text-[10px] text-blue-500/60"></i>
-                                    Authentication Email <span class="text-blue-500 ml-auto">*</span>
-                                </label>
-                                <div class="relative group">
-                                    <i class="fa-solid fa-at absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
-                                    <input type="email" name="email" value="{{ old('email') }}" required class="input-field" placeholder="admin@domain.com">
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="label-text">
-                                    <i class="fa-solid fa-key text-[10px] text-blue-500/60"></i>
-                                    Password <span class="text-blue-500 ml-auto">*</span>
-                                </label>
-                                <div class="relative group">
-                                    <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
-                                    <input type="password" name="password" required class="input-field" placeholder="••••••••">
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="label-text">
-                                    <i class="fa-solid fa-shield-halved text-[10px] text-blue-500/60"></i>
-                                    Verify Password <span class="text-blue-500 ml-auto">*</span>
-                                </label>
-                                <div class="relative group">
-                                    <i class="fa-solid fa-shield-check absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-400"></i>
-                                    <input type="password" name="password_confirmation" required class="input-field" placeholder="••••••••">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-10">
-                        <button type="submit" class="btn-submit">
-                            Initialize Deployment
-                        </button>
-                        <p class="text-[9px] text-center text-slate-600 font-bold uppercase tracking-widest mt-6">
-                            By proceeding, you authorize system provisioning under the MCU Governance framework.
-                        </p>
-                    </div>
-
-                </form>
             </div>
-        </div>
 
+            <!-- Section 2: Administrative Backbone -->
+            <div class="space-y-8 pt-8 border-t border-white/5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="label-text">
+                            <i class="fa-solid fa-user-gear text-blue-500/60"></i>
+                            Master Administrator Name <span class="text-blue-500 ml-auto">*</span>
+                        </label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-user-tie input-icon"></i>
+                            <input type="text" name="name" value="{{ old('name') }}" required class="input-field" placeholder="Primary System Controller">
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="label-text">
+                            <i class="fa-solid fa-id-badge text-blue-500/60"></i>
+                            Secure Entry Email <span class="text-blue-500 ml-auto">*</span>
+                        </label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-at input-icon"></i>
+                            <input type="email" name="email" value="{{ old('email') }}" required class="input-field" placeholder="admin@domain.systems">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="label-text">
+                            <i class="fa-solid fa-key text-blue-500/60"></i>
+                            Access Password <span class="text-blue-500 ml-auto">*</span>
+                        </label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" name="password" required class="input-field" placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="label-text">
+                            <i class="fa-solid fa-shield-halved text-blue-500/60"></i>
+                            Confirm Protocol <span class="text-blue-500 ml-auto">*</span>
+                        </label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-shield-check input-icon"></i>
+                            <input type="password" name="password_confirmation" required class="input-field" placeholder="••••••••">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6">
+                <button type="submit" class="btn-submit">
+                    Initialize Deployment Instance
+                </button>
+                <div class="mt-8 flex flex-col items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="flex -space-x-2">
+                            <img src="https://ui-avatars.com/api/?name=JS&background=3b82f6&color=fff" class="w-6 h-6 rounded-full border border-dark">
+                            <img src="https://ui-avatars.com/api/?name=MK&background=6366f1&color=fff" class="w-6 h-6 rounded-full border border-dark">
+                        </div>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Joined by 1,200+ Enterprise Leaders</p>
+                    </div>
+                    <p class="text-[8px] text-center text-slate-600 font-bold uppercase tracking-[0.2em] leading-relaxed max-w-sm">
+                        Secured by Mekong CyberUnit Cryptographic Layer. All deployments are isolated and governed by MCU-9 Protocol.
+                    </p>
+                </div>
+            </div>
+        </form>
     </div>
 
 </body>
