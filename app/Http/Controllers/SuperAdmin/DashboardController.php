@@ -31,6 +31,13 @@ class DashboardController extends Controller
             ->take(3)
             ->get();
 
-        return view('superadmin.dashboard.index', compact('companiesCount', 'activeCompaniesCount', 'totalUsers', 'companiesGrowth', 'recentUsers'));
+        // Get companies expiring soon
+        $expiringCompanies = Company::where('status', 'active')
+            ->whereNotNull('expiry_date')
+            ->orderBy('expiry_date', 'asc')
+            ->take(4)
+            ->get();
+
+        return view('superadmin.dashboard.index', compact('companiesCount', 'activeCompaniesCount', 'totalUsers', 'companiesGrowth', 'recentUsers', 'expiringCompanies'));
     }
 }

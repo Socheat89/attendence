@@ -138,55 +138,46 @@
         </div>
     </div>
 
-    <!-- Quick Actions / System Health -->
+    <!-- Expiring Tenants -->
     <div class="premium-card p-0 overflow-hidden flex flex-col">
-        <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+        <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
             <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                System Status
+                <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Expiring Subscriptions
             </h3>
+            <a href="{{ route('superadmin.companies.index') }}" class="text-xs text-blue-600 font-bold hover:underline">View All</a>
         </div>
         
         <div class="p-6 flex-1 flex flex-col gap-5">
+            @forelse($expiringCompanies as $company)
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shadow-inner">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shadow-inner font-bold">
+                        {{ strtoupper(substr($company->name, 0, 1)) }}
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-slate-800">Global Database</h4>
-                        <p class="text-xs text-slate-500 mt-0.5">Automated Backups ON</p>
+                        <h4 class="text-sm font-bold text-slate-800 truncate max-w-[120px]" title="{{ $company->name }}">{{ $company->name }}</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">{{ $company->expiry_date ? \Carbon\Carbon::parse($company->expiry_date)->format('M d, Y') : 'N/A' }}</p>
                     </div>
                 </div>
-                <div class="text-emerald-500 bg-emerald-50 px-2 py-1 rounded text-xs font-bold border border-emerald-100">Healthy</div>
+                @php
+                    $isExpired = $company->expiry_date && \Carbon\Carbon::parse($company->expiry_date)->endOfDay()->isPast();
+                    $daysLeft = $company->expiry_date ? floor(now()->diffInDays(\Carbon\Carbon::parse($company->expiry_date)->endOfDay(), false)) : null;
+                @endphp
+                @if($isExpired)
+                    <div class="text-rose-500 bg-rose-50 px-2 py-1 rounded text-xs font-bold border border-rose-100">Expired</div>
+                @elseif($daysLeft !== null && $daysLeft <= 7)
+                    <div class="text-amber-600 bg-amber-50 px-2 py-1 rounded text-xs font-bold border border-amber-100">{{ $daysLeft }} Days</div>
+                @elseif($daysLeft !== null)
+                    <div class="text-slate-600 bg-slate-50 px-2 py-1 rounded text-xs font-bold border border-slate-200">{{ $daysLeft }} Days</div>
+                @endif
             </div>
-
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shadow-inner">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-bold text-slate-800">Auth Gateway</h4>
-                        <p class="text-xs text-slate-500 mt-0.5">JWT & Session Mgmt</p>
-                    </div>
-                </div>
-                <div class="text-emerald-500 bg-emerald-50 px-2 py-1 rounded text-xs font-bold border border-emerald-100">Optimal</div>
+            @empty
+            <div class="text-center py-6 text-sm text-slate-500">
+                <svg class="w-12 h-12 text-emerald-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                No subscriptions expiring soon.
             </div>
-
-             <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shadow-inner">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-bold text-slate-800">Storage Cluster</h4>
-                        <p class="text-xs text-slate-500 mt-0.5">14.2 GB / 500 GB Used</p>
-                    </div>
-                </div>
-                <div class="text-blue-500 bg-blue-50 px-2 py-1 rounded text-xs font-bold border border-blue-100">2% Load</div>
-            </div>
-            
+            @endforelse
         </div>
     </div>
 
