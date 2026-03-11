@@ -11,7 +11,7 @@ class SettingController extends Controller
 {
     public function edit()
     {
-        $setting = CompanySetting::query()->firstOrCreate(['id' => 1], [
+        $setting = CompanySetting::query()->firstOrCreate(['company_id' => auth()->user()->company_id ?? 1], [
             'company_name' => 'HRM Company',
             'primary_color' => '#1f4f82',
             'timezone' => 'UTC',
@@ -32,7 +32,7 @@ class SettingController extends Controller
 
     public function update(UpdateCompanySettingRequest $request)
     {
-        $setting = CompanySetting::query()->firstOrCreate(['id' => 1], [
+        $setting = CompanySetting::query()->firstOrCreate(['company_id' => auth()->user()->company_id ?? 1], [
             'company_name' => 'HRM Company',
             'primary_color' => '#1f4f82',
             'timezone' => 'UTC',

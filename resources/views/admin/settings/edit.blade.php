@@ -7,17 +7,37 @@
     </div>
 
     <!-- Alert / Flash Messages via Alpine -->
-    @if(session('success'))
+    @if(session('success') || session('status'))
         <div x-data="{ show: true }" x-show="show" class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl p-4 flex items-start justify-between">
             <div class="flex items-center">
                 <svg class="w-5 h-5 text-emerald-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                <p class="text-sm font-medium">{{ session('success') }}</p>
+                <p class="text-sm font-medium">{{ session('success') ?? session('status') }}</p>
             </div>
-            <button @click="show = false" class="text-emerald-500 hover:text-emerald-700 transition-colors">
+            <button type="button" @click="show = false" class="text-emerald-500 hover:text-emerald-700 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
     @endif
+
+    @if($errors->any())
+        <div x-data="{ show: true }" x-show="show" class="mb-6 bg-red-50 border border-red-200 text-red-800 rounded-xl p-4 flex items-start justify-between">
+            <div class="flex flex-col">
+                <div class="flex items-center mb-2">
+                    <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <p class="text-sm font-bold">Please correct the errors below:</p>
+                </div>
+                <ul class="list-disc pl-9 text-xs">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            <button type="button" @click="show = false" class="text-red-500 hover:text-red-700 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    @endif
+
 
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden max-w-5xl">
         <form method="POST" action="{{ route('admin.settings.update') }}">

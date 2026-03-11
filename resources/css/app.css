@@ -21,5 +21,31 @@
     .d-flex {
         @apply flex;
     }
+
+    /* ─── Auth / Form Input Components ─────────────── */
+    .auth-input {
+        @apply w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 placeholder-slate-400
+               text-sm font-medium
+               transition-all duration-200
+               focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 focus:bg-white;
+    }
+
+    .auth-input.is-invalid,
+    .auth-input:invalid:not(:placeholder-shown) {
+        @apply border-red-400 bg-red-50 focus:ring-red-500/20 focus:border-red-500;
+    }
+
+    .auth-error {
+        @apply flex items-center gap-1.5 text-xs font-semibold text-red-600 mt-1.5;
+    }
+
+    /* ─── Primary Button ────────────────────────────── */
+    .btn-primary-custom {
+        @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white
+               font-bold text-sm rounded-xl shadow-md shadow-blue-200
+               transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+    }
+
     /* Add other bootstrap utilities used in views if necessary */
 }
+
