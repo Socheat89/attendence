@@ -160,9 +160,14 @@
                 @endif
                 
                 <div class="mt-8 pt-8 border-t border-white/5 px-6">
+                    <a href="{{ route('profile.edit') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('profile.edit') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <i class="fa-regular fa-user w-5 h-5 mr-3 {{ request()->routeIs('profile.edit') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
+                        Profile
+                    </a>
+
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="flex items-center text-slate-400 hover:text-white text-sm font-medium transition-colors">
+                        <button type="submit" class="flex items-center text-slate-400 hover:text-white text-sm font-medium transition-colors mt-3">
                             <i class="fa-solid fa-arrow-right-from-bracket mr-3"></i>
                             Sign Out
                         </button>
