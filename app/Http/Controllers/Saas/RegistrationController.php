@@ -47,8 +47,13 @@ class RegistrationController extends Controller
         $name = $request->input('name', 'Unknown User');
         $contact = $request->input('contact', 'No Contact');
         $billingCycle = $request->input('billing_cycle', 'monthly');
-        $months = ($billingCycle === 'yearly') ? 12 : 1;
         $amount = $request->input('total_amount', number_format($plan->price, 2));
+        $months = $request->input('months');
+        
+        if (!$months) {
+            $months = ($billingCycle === 'yearly') ? 12 : 1;
+        }
+        
         $token = \Illuminate\Support\Str::random(40);
 
         \App\Models\PaymentRequest::create([

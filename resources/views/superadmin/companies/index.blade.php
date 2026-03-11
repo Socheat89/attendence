@@ -111,6 +111,11 @@
                         @endif
                     </td>
                     <td class="px-6 py-4">
+                        <div class="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-tight">
+                            {{ $company->billing_cycle ?? 'Monthly' }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
                         @if($company->expiry_date)
                             <div class="flex flex-col">
                                 <span class="text-sm font-bold {{ Carbon\Carbon::parse($company->expiry_date)->isPast() ? 'text-rose-600' : 'text-slate-700' }}">

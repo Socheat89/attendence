@@ -196,12 +196,12 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="row">
-                        <div class="col-6 form-group">
+                    <div class="w-full flex gap-4">
+                        <div class="flex-1 form-group">
                             <label class="form-label">From</label>
                             <input type="date" name="start_date" class="form-input" required>
                         </div>
-                        <div class="col-6 form-group">
+                        <div class="flex-1 form-group">
                             <label class="form-label">To</label>
                             <input type="date" name="end_date" class="form-input" required>
                         </div>
@@ -222,12 +222,12 @@
                         <label class="form-label">Date</label>
                         <input type="date" name="ot_date" class="form-input" required>
                     </div>
-                    <div class="row">
-                        <div class="col-6 form-group">
+                    <div class="w-full flex gap-4">
+                        <div class="flex-1 form-group">
                             <label class="form-label">Start Time</label>
                             <input type="time" name="start_time" class="form-input" required>
                         </div>
-                        <div class="col-6 form-group">
+                        <div class="flex-1 form-group">
                             <label class="form-label">End Time</label>
                             <input type="time" name="end_time" class="form-input" required>
                         </div>
@@ -267,7 +267,7 @@
             
             <!-- Leave List -->
             <template x-if="tab === 'leave'">
-                <div class="d-flex flex-column gap-3">
+                <div class="flex flex-col gap-3">
                     @forelse($leaveRequests as $leave)
                         <div class="history-card">
                             <div class="type-icon" style="color:var(--brand); background:var(--brand-light)">
@@ -288,7 +288,7 @@
             
             <!-- OT List -->
             <template x-if="tab === 'ot'">
-                <div class="d-flex flex-column gap-3">
+                <div class="flex flex-col gap-3">
                     @forelse($otRequests as $ot)
                         <div class="history-card">
                             <div class="type-icon" style="color:#d97706; background:#fef3c7">
@@ -309,7 +309,7 @@
 
             <!-- Day Off List -->
             <template x-if="tab === 'dayoff'">
-                <div class="d-flex flex-column gap-3">
+                <div class="flex flex-col gap-3">
                     @forelse($dayoffRequests as $req)
                         <div class="history-card">
                             <div class="type-icon" style="color:#9333ea; background:#f3e8ff">

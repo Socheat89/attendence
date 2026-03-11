@@ -60,6 +60,17 @@
                         </select>
                         @error('status')<span class="text-rose-500 text-xs mt-1 block font-medium">{{ $message }}</span>@enderror
                     </div>
+
+                    <div>
+                        <label for="billing_cycle" class="block text-sm font-semibold text-slate-700 mb-1.5">Billing Cycle</label>
+                        <select name="billing_cycle" id="billing_cycle" required
+                            class="block w-full px-4 py-3 border border-slate-200 rounded-xl leading-5 bg-slate-50 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 sm:text-sm transition-all text-slate-900 font-bold">
+                            <option value="trial" {{ old('billing_cycle', $company->billing_cycle) === 'trial' ? 'selected' : '' }}>Trial (Free)</option>
+                            <option value="monthly" {{ old('billing_cycle', $company->billing_cycle) === 'monthly' ? 'selected' : '' }}>Monthly</option>
+                            <option value="yearly" {{ old('billing_cycle', $company->billing_cycle) === 'yearly' ? 'selected' : '' }}>Yearly (Annual)</option>
+                        </select>
+                        @error('billing_cycle')<span class="text-rose-500 text-xs mt-1 block font-medium">{{ $message }}</span>@enderror
+                    </div>
                 </div>
 
                 <!-- Expiration & Limits -->

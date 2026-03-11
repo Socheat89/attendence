@@ -166,7 +166,7 @@
             <div class="list-count">{{ $payrolls->total() }} Records</div>
         </div>
 
-        <div class="d-flex flex-column gap-3">
+        <div class="flex flex-col gap-3">
             @forelse($payrolls as $payroll)
                 @php
                     // Pre-calculate data for Alpine

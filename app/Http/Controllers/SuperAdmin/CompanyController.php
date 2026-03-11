@@ -28,6 +28,7 @@ class CompanyController extends Controller
             'status' => 'required|in:active,suspended',
             'subscription_plan_id' => 'required|exists:subscription_plans,id',
             'expiry_date' => 'nullable|date',
+            'billing_cycle' => 'required|string|in:trial,monthly,yearly',
         ]);
 
         $company->update($validated);
