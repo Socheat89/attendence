@@ -370,7 +370,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
         <a href="{{ route('dashboard') }}" class="btn-primary">Dashboard <i class="fa-solid fa-arrow-right" style="font-size:.8rem"></i></a>
       @else
         <a href="{{ route('login') }}" class="btn-ghost">Login</a>
-        <a href="{{ route('register') }}" class="btn-primary">Get Started Free</a>
+        <a href="{{ isset($plans) && $plans->where('price', 0)->first() ? route('register.company', $plans->where('price', 0)->first()->id) : '#pricing' }}" class="btn-primary">Get Started Free</a>
       @endauth
     </div>
   </div>
@@ -387,7 +387,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
   </h1>
   <p class="hero-sub">Mekong CyberUnit helps you manage employees, QR attendance, payroll, and reports — all in one smart system.</p>
   <div class="hero-btns">
-    <a href="{{ route('register') }}" class="btn-hero btn-hero-primary">
+    <a href="{{ isset($plans) && $plans->where('price', 0)->first() ? route('register.company', $plans->where('price', 0)->first()->id) : '#pricing' }}" class="btn-hero btn-hero-primary">
       <i class="fa-solid fa-rocket"></i> Try For Free
     </a>
     <a href="#features" class="btn-hero btn-hero-outline">
@@ -610,7 +610,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
     <h2 class="cta-title">Ready for <br><span class="grad">Transformation?</span></h2>
     <p class="cta-sub">Join hundreds of growing companies using Mekong CyberUnit</p>
     <div class="cta-btns">
-      <a href="{{ route('register') }}" class="btn-hero btn-hero-primary"><i class="fa-solid fa-rocket"></i> Register Now</a>
+      <a href="{{ isset($plans) && $plans->where('price', 0)->first() ? route('register.company', $plans->where('price', 0)->first()->id) : '#pricing' }}" class="btn-hero btn-hero-primary"><i class="fa-solid fa-rocket"></i> Register Now</a>
       <a href="https://t.me/SOCHEAT_DOEM" target="_blank" class="btn-hero btn-hero-outline"><i class="fa-brands fa-telegram"></i> Contact Support</a>
     </div>
   </div>
