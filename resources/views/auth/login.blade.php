@@ -1,95 +1,106 @@
 <x-guest-layout>
 
-    <!-- Header -->
+    {{-- Header --}}
     <div style="margin-bottom:1.75rem">
-        <h2 style="font-size:1.65rem;font-weight:900;color:var(--white);letter-spacing:-.025em;margin-bottom:.35rem">
+        <h2 style="font-size:1.5rem;font-weight:900;color:#eef3fe;letter-spacing:-.025em;margin:0 0 .35rem;font-family:'Sora',sans-serif">
             Welcome Back 👋
         </h2>
-        <p style="font-size:.88rem;font-weight:500;color:#475569">
+        <p style="font-size:.85rem;font-weight:500;color:#475569;margin:0">
             Sign in to your Mekong CyberUnit account
         </p>
     </div>
 
-    <!-- Session Status (e.g. password reset success) -->
+    {{-- Session Status --}}
     <x-auth-session-status :status="session('status')" />
 
     <form method="POST" action="{{ route('login') }}" style="display:flex;flex-direction:column;gap:1.1rem" id="loginForm">
         @csrf
 
-        <!-- Email -->
+        {{-- Email --}}
         <div>
-            <x-input-label for="email" value="Email Address" />
+            <label class="auth-label" for="email">Email Address</label>
             <div class="auth-input-wrap">
                 <i class="fa-solid fa-envelope auth-input-icon"></i>
-                <x-text-input
+                <input
                     id="email"
                     type="email"
                     name="email"
-                    :value="old('email')"
+                    value="{{ old('email') }}"
                     required
                     autofocus
                     autocomplete="username"
                     placeholder="you@company.com"
-                    style="padding-left:2.6rem"
-                />
+                    class="auth-input"
+                >
             </div>
-            <x-input-error :messages="$errors->get('email')" />
+            @error('email')
+                <div class="auth-error"><i class="fa-solid fa-circle-exclamation"></i>{{ $message }}</div>
+            @enderror
         </div>
 
-        <!-- Password -->
+        {{-- Password --}}
         <div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.45rem">
-                <x-input-label for="password" value="Password" style="margin-bottom:0" />
+                <label class="auth-label" for="password" style="margin:0">Password</label>
                 @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}" class="auth-link" style="font-size:.75rem">
+                    <a href="{{ route('password.request') }}" class="auth-link" style="font-size:.73rem">
                         Forgot password?
                     </a>
                 @endif
             </div>
             <div class="auth-input-wrap">
                 <i class="fa-solid fa-lock auth-input-icon"></i>
-                <x-text-input
+                <input
                     id="password"
                     type="password"
                     name="password"
                     required
                     autocomplete="current-password"
                     placeholder="••••••••"
-                    style="padding-left:2.6rem;padding-right:2.8rem"
-                />
+                    class="auth-input"
+                    style="padding-right:2.8rem"
+                >
                 <button type="button" class="pw-toggle" onclick="togglePw('password','pwEye')" tabindex="-1">
                     <i class="fa-solid fa-eye" id="pwEye"></i>
                 </button>
             </div>
-            <x-input-error :messages="$errors->get('password')" />
+            @error('password')
+                <div class="auth-error"><i class="fa-solid fa-circle-exclamation"></i>{{ $message }}</div>
+            @enderror
         </div>
 
-        <!-- Remember Me -->
-        <div style="display:flex;align-items:center;gap:.65rem">
-            <input
-                id="remember_me"
-                type="checkbox"
-                name="remember"
-                style="width:16px;height:16px;accent-color:var(--blue);cursor:pointer;flex-shrink:0"
-            >
-            <label for="remember_me" style="font-size:.82rem;font-weight:500;color:#475569;cursor:pointer">
-                Remember me
-            </label>
+        {{-- Remember Me --}}
+        <label class="auth-check-label">
+            <input type="checkbox" name="remember" id="remember_me">
+            Keep me signed in
+        </label>
+
+        {{-- Submit --}}
+        <div style="padding-top:.25rem">
+            <button type="submit" class="auth-btn" id="loginBtn">
+                <i class="fa-solid fa-arrow-right-to-bracket" style="font-size:.85rem"></i>
+                Sign In
+            </button>
         </div>
 
-        <!-- Submit -->
-        <div style="padding-top:.35rem">
-            <x-primary-button style="width:100%" id="loginBtn">
-                <i class="fa-solid fa-arrow-right-to-bracket" style="font-size:.85rem;margin-right:.5rem"></i>
-                Log In
-            </x-primary-button>
+        {{-- Separator --}}
+        <div class="auth-sep">
+            <div class="auth-sep-line"></div>
+            <div class="auth-sep-text">New here?</div>
+            <div class="auth-sep-line"></div>
         </div>
 
-        <!-- Register link -->
-        <p style="text-align:center;font-size:.85rem;font-weight:500;color:#475569;margin-top:.25rem">
-            Don't have an account?
-            <a href="{{ route('register') }}" class="auth-link">Register for free</a>
-        </p>
+        {{-- Register Link --}}
+        <a href="{{ route('register') }}"
+           style="display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.85rem;
+                  border-radius:12px;border:1.5px solid rgba(45,124,246,0.2);
+                  color:#60a5fa;font-size:.88rem;font-weight:700;text-decoration:none;
+                  background:rgba(45,124,246,0.05);transition:all .2s"
+           onmouseover="this.style.borderColor='rgba(45,124,246,0.4)';this.style.background='rgba(45,124,246,0.1)'"
+           onmouseout="this.style.borderColor='rgba(45,124,246,0.2)';this.style.background='rgba(45,124,246,0.05)'">
+            <i class="fa-solid fa-building-circle-arrow-right" style="font-size:.82rem"></i>
+            Register a new company
+        </a>
     </form>
 
     <script>
@@ -107,9 +118,8 @@
 
         document.getElementById('loginForm').addEventListener('submit', function () {
             const btn = document.getElementById('loginBtn');
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="font-size:.85rem;margin-right:.5rem"></i> Authenticating...';
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="font-size:.85rem"></i> Authenticating...';
             btn.disabled = true;
-            btn.style.opacity = '.8';
         });
     </script>
 
