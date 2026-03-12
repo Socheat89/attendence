@@ -7,10 +7,20 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="{{ $uiCompanySetting->primary_color ?? '#1f4f82' }}">
+    <meta name="theme-color" content="{{ $uiCompanySetting->primary_color ?? '#0f4c81' }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
+    {{-- Apple/iOS PWA Meta Tags --}}
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="{{ $uiCompanySetting->company_name ?? 'Mekong HRM' }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/icons/icon-152x152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/icons/icon-192x192.png') }}">
+    {{-- MS Tiles --}}
+    <meta name="msapplication-TileColor" content="#0f4c81">
+    <meta name="msapplication-TileImage" content="{{ asset('images/icons/icon-144x144.png') }}">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>{{ $uiCompanySetting->company_name ?? config('app.name') }} - Employee</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -884,6 +894,22 @@
 
 </div>
 
+<!-- PWA Install Banner -->
+<div id="pwa-install-banner" style="display:none; position:fixed; bottom:calc(var(--nav-h, 70px) + 8px); left:12px; right:12px; z-index:1070;
+     background:#0f4c81; color:#fff; border-radius:16px; padding:14px 16px;
+     align-items:center; gap:12px; box-shadow:0 8px 32px rgba(0,0,0,0.22); backdrop-filter:blur(8px);">
+    <div style="flex:1; min-width:0;">
+        <div style="font-weight:700; font-size:0.88rem; line-height:1.3;">📲 Install Mekong HRM</div>
+        <div style="font-size:0.75rem; opacity:0.8; margin-top:2px;">Add to Home Screen for full app experience</div>
+    </div>
+    <button onclick="installPWA()" style="background:#fff; color:#0f4c81; border:none; border-radius:10px;
+        padding:8px 16px; font-weight:700; font-size:0.8rem; cursor:pointer; white-space:nowrap; flex-shrink:0;">
+        Install
+    </button>
+    <button onclick="dismissInstall()" style="background:rgba(255,255,255,0.18); border:none; border-radius:8px;
+        padding:8px; cursor:pointer; flex-shrink:0; line-height:1; color:#fff; font-size:1rem;">✕</button>
+</div>
+
 <div class="loading-overlay" id="loadingOverlay"><div class="spinner-border"></div></div>
 
 <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1090;">
@@ -907,12 +933,45 @@
 
 <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js', true) }}"></script>
 <script>
+// ── Service Worker Registration ──
 if ('serviceWorker' in navigator) {
-    @if(app()->environment('production'))
-        navigator.serviceWorker.register('/service-worker.js').catch(() => {});
-    @else
-        navigator.serviceWorker.getRegistrations().then(r => r.forEach(reg => reg.unregister()));
-    @endif
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+            console.log('SW registered:', reg.scope);
+        }).catch(() => {});
+    });
+}
+
+// ── PWA Install Prompt ──
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'flex';
+});
+function installPWA() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        const banner = document.getElementById('pwa-install-banner');
+        if (banner) banner.style.display = 'none';
+    });
+}
+function dismissInstall() {
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'none';
+    sessionStorage.setItem('pwa-dismissed', '1');
+}
+window.addEventListener('appinstalled', () => {
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'none';
+});
+// Hide banner if dismissed before
+if (sessionStorage.getItem('pwa-dismissed')) {
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'none';
 }
 
 document.querySelectorAll('form').forEach((form) => {
