@@ -163,23 +163,29 @@
                                 <span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">Auto Setup</span>
                             </div>
 
-                            <div class="bg-blue-50 border border-blue-100 rounded-xl p-6 text-center">
+                            <div class="bg-gradient-to-br from-white to-blue-50 border-2 border-[#229ED9]/20 rounded-2xl p-8 py-10 text-center shadow-sm">
                                 @if($setting->telegram_chat_id)
-                                    <div class="mb-4 text-emerald-600 flex justify-center items-center gap-2">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <span class="font-bold">Connected (Chat ID: {{ $setting->telegram_chat_id }})</span>
+                                    <div class="mb-5 inline-flex items-center justify-center bg-emerald-100 text-emerald-700 px-5 py-2.5 rounded-full shadow-sm border border-emerald-200">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <span class="font-bold text-sm tracking-wide">Connected (Chat ID: {{ $setting->telegram_chat_id }})</span>
                                     </div>
-                                    <p class="text-sm text-slate-600 mb-4">Your Telegram group is connected. Want to change the group?</p>
+                                    <p class="text-[15px] text-slate-600 mb-6 font-medium">Your Telegram group is connected. Want to change the group?</p>
                                 @else
-                                    <p class="text-sm text-slate-600 mb-4">Click the button below to add our Bot to your Telegram group and connect automatically.</p>
+                                    <div class="mb-5 mx-auto inline-flex p-4 rounded-full bg-blue-100 text-[#229ED9] shadow-inner shadow-[#229ED9]/20">
+                                        <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06-.01.13-.02.26z"/></svg>
+                                    </div>
+                                    <p class="text-base text-slate-700 mb-6 font-medium max-w-sm mx-auto leading-relaxed">Click the button below to add our Bot to your Telegram group and connect automatically.</p>
                                 @endif
 
-                                <a href="https://t.me/MekongCyberUnit_Bot?startgroup={{ $setting->telegram_connection_token }}" target="_blank" class="inline-flex items-center gap-2 bg-[#229ED9] hover:bg-[#1C82B2] text-white font-semibold py-2.5 px-6 rounded-lg shadow-sm transition-colors">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06-.01.13-.02.26z"/></svg>
-                                    @if($setting->telegram_chat_id) Reconnect Group @else Connect Telegram Group @endif
+                                <a href="https://t.me/mekong_cyberunit_bot?startgroup={{ $setting->telegram_connection_token }}" target="_blank" class="inline-flex items-center gap-3 bg-[#229ED9] hover:bg-[#1C82B2] text-white text-lg font-bold py-3.5 px-8 rounded-xl shadow-lg shadow-[#229ED9]/40 hover:shadow-[#229ED9]/60 hover:scale-[1.02] transition-all transform active:scale-95">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06-.01.13-.02.26z"/></svg>
+                                    @if($setting->telegram_chat_id) Reconnect Telegram Group @else Connect Telegram Group @endif
                                 </a>
                                 
-                                <p class="text-xs text-slate-500 mt-4">Note: The webhook handles connecting the IDs securely in the background.</p>
+                                <p class="text-xs text-slate-500 mt-6 font-medium flex items-center justify-center gap-1.5">
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V9a5 5 0 00-10 0v2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                                    Our system securely synchronizes the Webhook in the background.
+                                </p>
                             </div>
                         </div>
                     </div>
