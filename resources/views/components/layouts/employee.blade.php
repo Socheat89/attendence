@@ -813,9 +813,93 @@
 
             .floating-scan { display: none; }
         }
+
+        /* ─── SPLASH SCREEN ───────────────────────────────── */
+        #app-splash {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: linear-gradient(160deg, #0f4c81 0%, #1a6bb5 50%, #0e3d6b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #app-splash.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #app-splash .splash-logo {
+            width: 130px;
+            height: 130px;
+            border-radius: 28px;
+            object-fit: contain;
+            background: #fff;
+            padding: 14px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+            animation: splashPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        #app-splash .splash-name {
+            margin-top: 22px;
+            font-family: 'Sora', 'Inter', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.02em;
+            animation: splashFadeUp 0.5s 0.15s ease both;
+        }
+        #app-splash .splash-tagline {
+            margin-top: 6px;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.65);
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            animation: splashFadeUp 0.5s 0.25s ease both;
+        }
+        #app-splash .splash-dots {
+            margin-top: 48px;
+            display: flex;
+            gap: 8px;
+            animation: splashFadeUp 0.5s 0.35s ease both;
+        }
+        #app-splash .splash-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            animation: dotPulse 1.2s infinite ease-in-out;
+        }
+        #app-splash .splash-dot:nth-child(2) { animation-delay: 0.2s; }
+        #app-splash .splash-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes splashPop {
+            from { opacity: 0; transform: scale(0.6); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        @keyframes splashFadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes dotPulse {
+            0%, 100% { background: rgba(255,255,255,0.3); transform: scale(0.8); }
+            50%       { background: rgba(255,255,255,0.85); transform: scale(1.15); }
+        }
     </style>
 </head>
 <body>
+{{-- ═══ APP SPLASH SCREEN ═══ --}}
+<div id="app-splash">
+    <img src="{{ asset('images/logo.jpg') }}" alt="Mekong HRM" class="splash-logo">
+    <div class="splash-name">{{ $uiCompanySetting->company_name ?? 'Mekong HRM' }}</div>
+    <div class="splash-tagline">HR Management System</div>
+    <div class="splash-dots">
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+    </div>
+</div>
 @php($showSalary = $uiCompanySetting?->payroll_enabled ?? true)
 @php($navCount = $showSalary ? 5 : 4)
 @php($routeName = request()->route()?->getName())
@@ -933,6 +1017,46 @@
 
 <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js', true) }}"></script>
 <script>
+// ── Splash Screen ──
+(function() {
+    const splash = document.getElementById('app-splash');
+    if (!splash) return;
+
+    // Only show splash on first visit or when launched as PWA (standalone)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true;
+    const wasShown = sessionStorage.getItem('splash-shown');
+
+    if (!isStandalone && wasShown) {
+        // Normal browser, already visited – skip splash instantly
+        splash.style.display = 'none';
+        return;
+    }
+
+    sessionStorage.setItem('splash-shown', '1');
+
+    // Minimum display time 1.5s, then fade out
+    const minTime = isStandalone ? 2000 : 1500;
+    const startTime = Date.now();
+
+    function hideSplash() {
+        const elapsed = Date.now() - startTime;
+        const delay = Math.max(0, minTime - elapsed);
+        setTimeout(() => {
+            splash.classList.add('hidden');
+            setTimeout(() => splash.remove(), 600);
+        }, delay);
+    }
+
+    if (document.readyState === 'complete') {
+        hideSplash();
+    } else {
+        window.addEventListener('load', hideSplash);
+        // Fallback: hide after 4s no matter what
+        setTimeout(hideSplash, 4000);
+    }
+})();
+
 // ── Service Worker Registration ──
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
