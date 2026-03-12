@@ -833,13 +833,13 @@
             pointer-events: none;
         }
         #app-splash .splash-logo {
-            width: 130px;
-            height: 130px;
-            border-radius: 28px;
+            width: 90px;
+            height: 90px;
+            border-radius: 20px;
             object-fit: contain;
             background: #fff;
-            padding: 14px;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+            padding: 10px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.28);
             animation: splashPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
         }
         #app-splash .splash-name {
@@ -885,6 +885,22 @@
         @keyframes dotPulse {
             0%, 100% { background: rgba(255,255,255,0.3); transform: scale(0.8); }
             50%       { background: rgba(255,255,255,0.85); transform: scale(1.15); }
+        }
+
+        /* ─── PAGE ENTER ANIMATION ── */
+        @keyframes pageEnter {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pageExit {
+            from { opacity: 1; transform: translateY(0); }
+            to   { opacity: 0; transform: translateY(-8px); }
+        }
+        .emp-main {
+            animation: pageEnter 0.35s ease both;
+        }
+        .emp-main.page-exit {
+            animation: pageExit 0.18s ease both;
         }
     </style>
 </head>
@@ -1022,38 +1038,31 @@
     const splash = document.getElementById('app-splash');
     if (!splash) return;
 
-    // Only show splash on first visit or when launched as PWA (standalone)
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-        || window.navigator.standalone === true;
-    const wasShown = sessionStorage.getItem('splash-shown');
+    // Use localStorage so splash only shows ONCE per device/browser
+    const SPLASH_KEY = 'mekong-hrm-splash-shown';
+    const alreadyShown = localStorage.getItem(SPLASH_KEY);
 
-    if (!isStandalone && wasShown) {
-        // Normal browser, already visited – skip splash instantly
+    if (alreadyShown) {
+        // Already seen - hide instantly, no splash
         splash.style.display = 'none';
         return;
     }
 
-    sessionStorage.setItem('splash-shown', '1');
-
-    // Minimum display time 1.5s, then fade out
-    const minTime = isStandalone ? 2000 : 1500;
-    const startTime = Date.now();
+    // First ever launch - mark it and show splash
+    localStorage.setItem(SPLASH_KEY, '1');
 
     function hideSplash() {
-        const elapsed = Date.now() - startTime;
-        const delay = Math.max(0, minTime - elapsed);
         setTimeout(() => {
             splash.classList.add('hidden');
-            setTimeout(() => splash.remove(), 600);
-        }, delay);
+            setTimeout(() => splash.remove(), 550);
+        }, 1800);
     }
 
     if (document.readyState === 'complete') {
         hideSplash();
     } else {
         window.addEventListener('load', hideSplash);
-        // Fallback: hide after 4s no matter what
-        setTimeout(hideSplash, 4000);
+        setTimeout(hideSplash, 5000); // safety fallback
     }
 })();
 
@@ -1104,11 +1113,25 @@ document.querySelectorAll('form').forEach((form) => {
             event.preventDefault();
             return;
         }
-
-        const overlay = document.getElementById('loadingOverlay');
-        if (overlay) {
-            overlay.style.display = 'flex';
+        // Only show loading overlay for scan/upload forms, not logout or simple nav
+        const action = form.getAttribute('action') || '';
+        const isLogout = action.includes('logout');
+        if (!isLogout) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.style.display = 'flex';
         }
+    });
+});
+
+// ── Navigation link animation ──
+// Add subtle fade transition when tapping nav links
+document.querySelectorAll('.bottom-nav a, .emp-topbar a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
+        e.preventDefault();
+        document.querySelector('.emp-main')?.classList.add('page-exit');
+        setTimeout(() => { window.location.href = href; }, 180);
     });
 });
 </script>
