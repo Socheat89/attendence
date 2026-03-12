@@ -310,8 +310,8 @@ class RegistrationController extends Controller
 
             DB::commit();
 
-            // Log the new user in
-            Auth::login($user);
+            // Log the new user in persistently
+            Auth::login($user, true);
 
             // Clear UI settings cache to ensure it's reloaded for the new tenant
             \Illuminate\Support\Facades\Cache::forget('ui_company_setting_' . $company->id);
