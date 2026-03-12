@@ -128,7 +128,7 @@
         <div class="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-purple-600/20 blur-[80px] pointer-events-none"></div>
 
         <div class="relative z-10 p-12 slide-up-fade">
-            <a href="{{ route('pricing') }}" class="flex items-center gap-3 w-fit hover:opacity-80 transition-opacity group">
+            <a href="{{ url('/') }}" class="flex items-center gap-3 w-fit hover:opacity-80 transition-opacity group">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform duration-300">
                     <i class="fa-solid fa-bolt-lightning text-white"></i>
                 </div>
@@ -193,7 +193,7 @@
     <div class="flex-1 w-full lg:w-7/12 flex flex-col items-center justify-center relative overflow-y-auto px-6 py-12 md:px-12 scroll-smooth">
         
         <!-- Mobile Logo -->
-        <a href="{{ route('pricing') }}" class="lg:hidden flex items-center justify-center gap-3 w-full mb-10 text-white slide-up-fade">
+        <a href="{{ url('/') }}" class="lg:hidden flex items-center justify-center gap-3 w-full mb-10 text-white slide-up-fade">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 text-white">
                 <i class="fa-solid fa-bolt-lightning"></i>
             </div>
