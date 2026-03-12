@@ -25,6 +25,7 @@ class CompanySetting extends Model
         'late_deduction_per_minute',
         'allowed_late_count',
         'late_deduction_amount',
+        'telegram_connection_token',
     ];
 
     protected function casts(): array
