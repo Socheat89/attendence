@@ -13,19 +13,19 @@
             <div>
                 <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Operations</p>
                 <div class="space-y-1">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group {{ request()->routeIs('dashboard') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 transition-all duration-200 {{ request()->routeIs('dashboard') ? 'text-white' : 'text-slate-400 hover:text-white' }}">
                         <span class="font-bold text-sm">Dashboard</span>
                     </a>
                     
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group text-slate-400 hover:text-white hover:bg-white/5">
+                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 transition-all duration-200 text-slate-400 hover:text-white">
                         <span class="font-bold text-sm">Employees</span>
                     </a>
 
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group text-slate-400 hover:text-white hover:bg-white/5">
+                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 transition-all duration-200 text-slate-400 hover:text-white">
                         <span class="font-bold text-sm">Attendance</span>
                     </a>
 
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group text-slate-400 hover:text-white hover:bg-white/5">
+                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 transition-all duration-200 text-slate-400 hover:text-white">
                         <span class="font-bold text-sm">Leaves</span>
                         <span class="ml-auto bg-blue-500/10 text-blue-400 text-[10px] font-black px-2 py-0.5 rounded-lg border border-blue-500/20">04</span>
                     </a>
@@ -36,10 +36,10 @@
             <div>
                 <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Financials</p>
                 <div class="space-y-1">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group text-slate-400 hover:text-white hover:bg-white/5">
+                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 transition-all duration-200 text-slate-400 hover:text-white">
                         <span class="font-bold text-sm">Payroll</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group text-slate-400 hover:text-white hover:bg-white/5">
+                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 transition-all duration-200 text-slate-400 hover:text-white">
                         <span class="font-bold text-sm">Expenses</span>
                     </a>
                 </div>
@@ -49,13 +49,13 @@
             <div>
                 <p class="px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Workspace</p>
                 <div class="space-y-1">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group text-slate-400 hover:text-white hover:bg-white/5">
+                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 transition-all duration-200 text-slate-400 hover:text-white">
                         <span class="font-bold text-sm">Branches</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group text-slate-400 hover:text-white hover:bg-white/5">
+                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 transition-all duration-200 text-slate-400 hover:text-white">
                         <span class="font-bold text-sm">Departments</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 group text-slate-400 hover:text-white hover:bg-white/5">
+                    <a href="#" class="flex items-center gap-3 px-4 py-2.5 transition-all duration-200 text-slate-400 hover:text-white">
                         <span class="font-bold text-sm">Settings</span>
                     </a>
                 </div>
