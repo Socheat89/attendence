@@ -38,14 +38,13 @@
             <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" 
                  class="bg-emerald-500 text-white px-8 py-4 rounded-[24px] flex items-center gap-4 shadow-xl shadow-emerald-200 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                    <i class="fa-solid fa-check text-xl"></i>
                 </div>
                 <div>
                     <p class="font-bold">Configuration Updated</p>
                     <p class="text-xs text-white/80">Your changes have been synchronized successfully across the system.</p>
                 </div>
-                <button @click="show = false" class="ml-auto hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-xmark"></i>
+                <button @click="show = false" class="ml-auto hover:scale-110 transition-transform text-white font-bold">
+                    Close
                 </button>
             </div>
         @endif
@@ -55,16 +54,13 @@
             <!-- Sidebar Navigation (Desktop) -->
             <div class="lg:col-span-4 space-y-4">
                 <nav class="sticky top-10 space-y-2 p-2 bg-white/50 backdrop-blur-xl rounded-[32px] border border-white shadow-inner">
-                    <button @click="document.getElementById('profile-info').scrollIntoView({behavior: 'smooth'})" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-200 transition-all font-bold text-sm">
-                        <i class="fa-solid fa-user-gear w-5"></i>
+                    <button @click="document.getElementById('profile-info').scrollIntoView({behavior: 'smooth'})" class="w-full flex justify-center items-center gap-4 p-4 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-200 transition-all font-bold text-sm">
                         Profile Details
                     </button>
-                    <button @click="document.getElementById('security').scrollIntoView({behavior: 'smooth'})" class="w-full flex items-center gap-4 p-4 rounded-2xl text-slate-500 hover:bg-slate-100 transition-all font-bold text-sm">
-                        <i class="fa-solid fa-shield-halved w-5"></i>
+                    <button @click="document.getElementById('security').scrollIntoView({behavior: 'smooth'})" class="w-full flex justify-center items-center gap-4 p-4 rounded-2xl text-slate-500 hover:bg-slate-100 transition-all font-bold text-sm">
                         Security & Login
                     </button>
-                    <button @click="document.getElementById('danger-zone').scrollIntoView({behavior: 'smooth'})" class="w-full flex items-center gap-4 p-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm">
-                        <i class="fa-solid fa-trash-can w-5"></i>
+                    <button @click="document.getElementById('danger-zone').scrollIntoView({behavior: 'smooth'})" class="w-full flex justify-center items-center gap-4 p-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm">
                         Termination
                     </button>
                 </nav>
@@ -75,7 +71,6 @@
                     <div class="space-y-4 relative z-10">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs">
-                                <i class="fa-solid fa-building"></i>
                             </div>
                             <div>
                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Company</p>
@@ -84,7 +79,6 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs">
-                                <i class="fa-solid fa-user-tag"></i>
                             </div>
                             <div>
                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Role</p>
@@ -103,7 +97,6 @@
                     <div class="bg-slate-50 px-10 py-8 border-b border-slate-100 flex items-center justify-between">
                         <div class="flex items-center gap-6">
                             <div class="w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform duration-500">
-                                <i class="fa-solid fa-address-card text-2xl"></i>
                             </div>
                             <div>
                                 <h3 class="text-xl font-black text-slate-900 tracking-tight">Personal Profile</h3>
@@ -123,8 +116,8 @@
                                     <div class="relative">
                                         <img id="preview" src="{{ $user->photo_path ? asset('storage/'.$user->photo_path) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=3b82f6&color=fff&size=128' }}" 
                                              class="w-24 h-24 rounded-full object-cover border border-slate-200 shadow" />
-                                        <label for="photo" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-25 opacity-0 hover:opacity-100 rounded-full cursor-pointer transition-opacity">
-                                            <i class="fa-solid fa-camera text-white"></i>
+                                        <label for="photo" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-25 opacity-0 hover:opacity-100 rounded-full cursor-pointer transition-opacity text-white text-xs font-bold">
+                                            Upload
                                         </label>
                                     </div>
                                     <input id="photo" name="photo" type="file" accept="image/*" class="hidden" onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0])" />
@@ -152,7 +145,6 @@
 
                             <div class="pt-4 border-t border-slate-50 flex items-center justify-end">
                                 <x-primary-button class="px-10 py-4 rounded-2xl shadow-blue-200 group-hover:scale-[1.02] transition-transform">
-                                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
                                     {{ __('Save Changes') }}
                                 </x-primary-button>
                             </div>
@@ -165,7 +157,6 @@
                     <div class="bg-emerald-50/50 px-10 py-8 border-b border-emerald-100 flex items-center justify-between">
                         <div class="flex items-center gap-6">
                             <div class="w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform duration-500">
-                                <i class="fa-solid fa-shield-halved text-2xl"></i>
                             </div>
                             <div>
                                 <h3 class="text-xl font-black text-slate-900 tracking-tight">Security & Login</h3>
@@ -203,7 +194,6 @@
 
                             <div class="pt-6 border-t border-slate-50 flex items-center justify-end">
                                 <x-primary-button class="bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200 px-10 py-4 rounded-2xl group-hover:scale-[1.02] transition-transform">
-                                    <i class="fa-solid fa-key mr-2"></i>
                                     {{ __('Update Security') }}
                                 </x-primary-button>
                             </div>
@@ -216,7 +206,6 @@
                     <div class="bg-red-50/50 px-10 py-8 border-b border-red-100 flex items-center justify-between">
                         <div class="flex items-center gap-6">
                             <div class="w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center text-red-600 group-hover:rotate-12 transition-transform duration-500">
-                                <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
                             </div>
                             <div>
                                 <h3 class="text-xl font-black text-red-900 tracking-tight">System Exit</h3>
@@ -236,7 +225,6 @@
                         <div class="flex justify-end">
                             <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')" 
                                     class="px-10 py-4 bg-red-600 hover:bg-red-700 text-white font-bold text-sm tracking-widest uppercase rounded-2xl shadow-xl shadow-red-200 transition-all hover:scale-[1.02] active:scale-95">
-                                <i class="fa-solid fa-user-xmark mr-2"></i>
                                 {{ __('Request Deactivation') }}
                             </button>
                         </div>
@@ -254,7 +242,6 @@
 
             <div class="space-y-4">
                 <div class="w-16 h-16 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-2xl animate-bounce">
-                    <i class="fa-solid fa-circle-exclamation"></i>
                 </div>
                 <h2 class="text-3xl font-black text-slate-900 tracking-tight leading-tight">
                     Confirm <span class="text-red-600">Identity.</span>
