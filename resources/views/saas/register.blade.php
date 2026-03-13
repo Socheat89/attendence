@@ -190,202 +190,204 @@
     </div>
 
     <!-- Right Form Side -->
-    <div class="flex-1 w-full lg:w-7/12 flex flex-col items-center justify-center relative overflow-y-auto px-6 py-12 md:px-12 scroll-smooth">
+    <div class="flex-1 w-full lg:w-7/12 flex flex-col relative overflow-y-auto px-6 py-12 md:px-12 scroll-smooth">
         
-        <!-- Mobile Logo -->
-        <a href="{{ url('/') }}" class="lg:hidden flex items-center justify-center gap-3 w-full mb-10 text-white slide-up-fade">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 text-white">
-                <i class="fa-solid fa-bolt-lightning"></i>
-            </div>
-            <span class="heading-font font-bold text-2xl tracking-tight leading-none">Mekong<span class="text-blue-500">CyberUnit</span></span>
-        </a>
-
-        <div class="w-full max-w-xl mx-auto glass-panel rounded-3xl p-8 md:p-10 slide-up-fade delay-100 relative">
-            
-            <!-- Decorative accent line -->
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50 rounded-b-full"></div>
-
-            <div class="mb-8 text-center sm:text-left">
-                <h2 class="heading-font text-3xl font-extrabold text-white mb-2 tracking-tight">Create workspace</h2>
-                <p class="text-slate-400 font-medium text-sm">Set up the admin account for the <span class="text-blue-400 font-bold px-1 py-0.5 rounded bg-blue-500/10">{{ $plan->name }}</span> plan.</p>
-            </div>
-
-            @if(session('error'))
-            <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-200 flex items-start gap-3 animate-pulse">
-                <div class="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
-                    <i class="fa-solid fa-circle-exclamation text-red-400 text-xs"></i>
+        <div class="w-full max-w-xl mx-auto my-auto flex flex-col w-full">
+            <!-- Mobile Logo -->
+            <a href="{{ url('/') }}" class="lg:hidden flex items-center justify-center gap-3 w-full mb-10 text-white slide-up-fade">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 text-white">
+                    <i class="fa-solid fa-bolt-lightning"></i>
                 </div>
-                <span class="font-medium text-sm leading-relaxed">{{ session('error') }}</span>
-            </div>
-            @endif
+                <span class="heading-font font-bold text-2xl tracking-tight leading-none">Mekong<span class="text-blue-500">CyberUnit</span></span>
+            </a>
 
-            <form action="{{ route('register.company.store', $plan->id) }}" method="POST" class="space-y-8">
-                @csrf
+            <div class="w-full glass-panel rounded-3xl p-8 md:p-10 slide-up-fade delay-100 relative">
+                
+                <!-- Decorative accent line -->
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50 rounded-b-full"></div>
 
-                <!-- 1. Company Info -->
-                <div class="space-y-5">
-                    <div class="flex items-center gap-3 pb-3 border-b border-slate-700/50">
-                        <div class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">1</div>
-                        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Company Profile</h3>
-                    </div>
-                    
-                    <div>
-                        <label for="company_name" class="block text-sm font-semibold text-slate-300 mb-2">Company Name <span class="text-rose-400">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                <i class="fa-regular fa-building"></i>
-                            </div>
-                            <input type="text" name="company_name" id="company_name" value="{{ old('company_name') }}" required autofocus
-                                class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
-                                placeholder="e.g. Acme Corporation">
-                        </div>
-                        @error('company_name')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <div>
-                            <label for="company_email" class="block text-sm font-semibold text-slate-300 mb-2">Company Email</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                    <i class="fa-regular fa-envelope"></i>
-                                </div>
-                                <input type="email" name="company_email" id="company_email" value="{{ old('company_email') }}"
-                                    class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
-                                    placeholder="hello@acme.com">
-                            </div>
-                            @error('company_email')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-                        </div>
-                        <div>
-                            <label for="phone" class="block text-sm font-semibold text-slate-300 mb-2">Phone Number</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                    <i class="fa-solid fa-phone"></i>
-                                </div>
-                                <input type="text" name="phone" id="phone" value="{{ old('phone') }}"
-                                    class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
-                                    placeholder="+1 (555) 000-0000">
-                            </div>
-                            @error('phone')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-                        </div>
-                    </div>
+                <div class="mb-8 text-center sm:text-left">
+                    <h2 class="heading-font text-3xl font-extrabold text-white mb-2 tracking-tight">Create workspace</h2>
+                    <p class="text-slate-400 font-medium text-sm">Set up the admin account for the <span class="text-blue-400 font-bold px-1 py-0.5 rounded bg-blue-500/10">{{ $plan->name }}</span> plan.</p>
                 </div>
 
-                <!-- Billing Cycle if not free -->
-                @if($plan->price > 0)
-                <div class="space-y-4 pt-2">
-                     <label class="block text-sm font-semibold text-slate-300 mb-2">Billing Cycle <span class="text-rose-400">*</span></label>
-                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                         <!-- Monthly -->
-                         <label class="relative flex flex-col p-4 border border-slate-700 bg-slate-800/30 rounded-2xl cursor-pointer hover:bg-slate-800/60 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-900/20 group">
-                             <input type="radio" name="billing_cycle" value="monthly" checked class="sr-only">
-                             <span class="text-sm font-bold text-white mb-1">Monthly</span>
-                             <span class="text-xs text-blue-300 font-medium">${{ number_format($plan->price, 2) }}/mo</span>
-                             <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-slate-500 group-has-[:checked]:border-blue-400 group-has-[:checked]:bg-blue-500 flex items-center justify-center transition-all">
-                                 <div class="w-2 h-2 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
-                             </div>
-                         </label>
-                         
-                         <!-- Yearly -->
-                         <label class="relative flex flex-col p-4 border border-slate-700 bg-slate-800/30 rounded-2xl cursor-pointer hover:bg-slate-800/60 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-900/20 group overflow-hidden">
-                             <div class="absolute top-0 right-0 bg-gradient-to-l from-emerald-500/20 to-transparent w-24 h-full pointer-events-none"></div>
-                             <input type="radio" name="billing_cycle" value="yearly" class="sr-only">
-                             <div class="flex items-center gap-2 mb-1">
-                                 <span class="text-sm font-bold text-white">Yearly</span>
-                                 <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">SAVE 10%</span>
-                             </div>
-                             <span class="text-xs text-blue-300 font-medium">${{ number_format($plan->price * 12 * 0.9, 2) }}/yr</span>
-                             <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-slate-500 group-has-[:checked]:border-blue-400 group-has-[:checked]:bg-blue-500 flex items-center justify-center transition-all">
-                                 <div class="w-2 h-2 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
-                             </div>
-                         </label>
-                     </div>
-                 </div>
-                @else
-                    <input type="hidden" name="billing_cycle" value="trial">
+                @if(session('error'))
+                <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-200 flex items-start gap-3 animate-pulse">
+                    <div class="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-circle-exclamation text-red-400 text-xs"></i>
+                    </div>
+                    <span class="font-medium text-sm leading-relaxed">{{ session('error') }}</span>
+                </div>
                 @endif
 
-                <!-- 2. Admin Info -->
-                <div class="space-y-5 pt-4">
-                    <div class="flex items-center gap-3 pb-3 border-b border-slate-700/50">
-                        <div class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs font-bold">2</div>
-                        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Administrator Setup</h3>
-                    </div>
+                <form action="{{ route('register.company.store', $plan->id) }}" method="POST" class="space-y-8">
+                    @csrf
 
-                    <div>
-                        <label for="name" class="block text-sm font-semibold text-slate-300 mb-2">Your Full Name <span class="text-rose-400">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                <i class="fa-regular fa-user"></i>
-                            </div>
-                            <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                                class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
-                                placeholder="John Doe">
+                    <!-- 1. Company Info -->
+                    <div class="space-y-5">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-700/50">
+                            <div class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">1</div>
+                            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Company Profile</h3>
                         </div>
-                        @error('name')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-                    </div>
-
-                    <div>
-                        <label for="email" class="block text-sm font-semibold text-slate-300 mb-2">Admin Login Email <span class="text-rose-400">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                <i class="fa-solid fa-at"></i>
-                            </div>
-                            <input type="email" name="email" id="email" value="{{ old('email') }}" required
-                                class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
-                                placeholder="john@acme.com">
-                        </div>
-                        @error('email')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        
                         <div>
-                            <label for="password" class="block text-sm font-semibold text-slate-300 mb-2">Password <span class="text-rose-400">*</span></label>
+                            <label for="company_name" class="block text-sm font-semibold text-slate-300 mb-2">Company Name <span class="text-rose-400">*</span></label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                    <i class="fa-solid fa-lock"></i>
+                                    <i class="fa-regular fa-building"></i>
                                 </div>
-                                <input type="password" name="password" id="password" required
+                                <input type="text" name="company_name" id="company_name" value="{{ old('company_name') }}" required autofocus
                                     class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
-                                    placeholder="Min. 8 characters">
+                                    placeholder="e.g. Acme Corporation">
                             </div>
-                            @error('password')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                            @error('company_name')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
                         </div>
-                        <div>
-                            <label for="password_confirmation" class="block text-sm font-semibold text-slate-300 mb-2">Confirm Password <span class="text-rose-400">*</span></label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                    <i class="fa-solid fa-lock-keyhole"></i>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label for="company_email" class="block text-sm font-semibold text-slate-300 mb-2">Company Email</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-regular fa-envelope"></i>
+                                    </div>
+                                    <input type="email" name="company_email" id="company_email" value="{{ old('company_email') }}"
+                                        class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
+                                        placeholder="hello@acme.com">
                                 </div>
-                                <input type="password" name="password_confirmation" id="password_confirmation" required
-                                    class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
-                                    placeholder="Match password">
+                                @error('company_email')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
                             </div>
-                            @error('password_confirmation')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                            <div>
+                                <label for="phone" class="block text-sm font-semibold text-slate-300 mb-2">Phone Number</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-solid fa-phone"></i>
+                                    </div>
+                                    <input type="text" name="phone" id="phone" value="{{ old('phone') }}"
+                                        class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
+                                        placeholder="+1 (555) 000-0000">
+                                </div>
+                                @error('phone')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="pt-8">
-                    <button type="submit" class="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-base shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-1 transition-all group relative overflow-hidden">
-                        <span class="relative z-10 flex items-center gap-2">
-                            Launch Workspace
-                            <i class="fa-solid fa-rocket group-hover:translate-x-1 transition-transform"></i>
-                        </span>
-                        <!-- Subtle shine effect -->
-                        <div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-0"></div>
-                    </button>
-                    
-                    <p class="text-[12px] text-slate-500 font-medium text-center mt-6 p-4 rounded-xl bg-slate-800/20 border border-slate-700/30">
-                        <i class="fa-solid fa-shield-halved text-slate-400 mr-1"></i>
-                        By launching, you agree to our <a href="#" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">Terms of Service</a> and <a href="#" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">Privacy Policy</a>.
-                    </p>
-                </div>
-            </form>
-        </div>
-        
-        <!-- Subtle Footer -->
-        <div class="mt-8 text-center text-xs text-slate-500 slide-up-fade delay-400">
-            &copy; {{ date('Y') }} Mekong CyberUnit. All rights reserved.
+                    <!-- Billing Cycle if not free -->
+                    @if($plan->price > 0)
+                    <div class="space-y-4 pt-2">
+                         <label class="block text-sm font-semibold text-slate-300 mb-2">Billing Cycle <span class="text-rose-400">*</span></label>
+                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                             <!-- Monthly -->
+                             <label class="relative flex flex-col p-4 border border-slate-700 bg-slate-800/30 rounded-2xl cursor-pointer hover:bg-slate-800/60 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-900/20 group">
+                                 <input type="radio" name="billing_cycle" value="monthly" checked class="sr-only">
+                                 <span class="text-sm font-bold text-white mb-1">Monthly</span>
+                                 <span class="text-xs text-blue-300 font-medium">${{ number_format($plan->price, 2) }}/mo</span>
+                                 <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-slate-500 group-has-[:checked]:border-blue-400 group-has-[:checked]:bg-blue-500 flex items-center justify-center transition-all">
+                                     <div class="w-2 h-2 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
+                                 </div>
+                             </label>
+                             
+                             <!-- Yearly -->
+                             <label class="relative flex flex-col p-4 border border-slate-700 bg-slate-800/30 rounded-2xl cursor-pointer hover:bg-slate-800/60 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-900/20 group overflow-hidden">
+                                 <div class="absolute top-0 right-0 bg-gradient-to-l from-emerald-500/20 to-transparent w-24 h-full pointer-events-none"></div>
+                                 <input type="radio" name="billing_cycle" value="yearly" class="sr-only">
+                                 <div class="flex items-center gap-2 mb-1">
+                                     <span class="text-sm font-bold text-white">Yearly</span>
+                                     <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">SAVE 10%</span>
+                                 </div>
+                                 <span class="text-xs text-blue-300 font-medium">${{ number_format($plan->price * 12 * 0.9, 2) }}/yr</span>
+                                 <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-slate-500 group-has-[:checked]:border-blue-400 group-has-[:checked]:bg-blue-500 flex items-center justify-center transition-all">
+                                     <div class="w-2 h-2 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
+                                 </div>
+                             </label>
+                         </div>
+                     </div>
+                    @else
+                        <input type="hidden" name="billing_cycle" value="trial">
+                    @endif
+
+                    <!-- 2. Admin Info -->
+                    <div class="space-y-5 pt-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-700/50">
+                            <div class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs font-bold">2</div>
+                            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Administrator Setup</h3>
+                        </div>
+
+                        <div>
+                            <label for="name" class="block text-sm font-semibold text-slate-300 mb-2">Your Full Name <span class="text-rose-400">*</span></label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-regular fa-user"></i>
+                                </div>
+                                <input type="text" name="name" id="name" value="{{ old('name') }}" required
+                                    class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
+                                    placeholder="John Doe">
+                            </div>
+                            @error('name')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-semibold text-slate-300 mb-2">Admin Login Email <span class="text-rose-400">*</span></label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-at"></i>
+                                </div>
+                                <input type="email" name="email" id="email" value="{{ old('email') }}" required
+                                    class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
+                                    placeholder="john@acme.com">
+                            </div>
+                            @error('email')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label for="password" class="block text-sm font-semibold text-slate-300 mb-2">Password <span class="text-rose-400">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </div>
+                                    <input type="password" name="password" id="password" required
+                                        class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
+                                        placeholder="Min. 8 characters">
+                                </div>
+                                @error('password')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                            </div>
+                            <div>
+                                <label for="password_confirmation" class="block text-sm font-semibold text-slate-300 mb-2">Confirm Password <span class="text-rose-400">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-solid fa-lock-keyhole"></i>
+                                    </div>
+                                    <input type="password" name="password_confirmation" id="password_confirmation" required
+                                        class="glass-input block w-full pl-11 pr-4 py-3.5 rounded-xl sm:text-sm placeholder-slate-500"
+                                        placeholder="Match password">
+                                </div>
+                                @error('password_confirmation')<span class="text-rose-400 text-xs mt-1.5 block font-medium flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</span>@enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-8">
+                        <button type="submit" class="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-base shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-1 transition-all group relative overflow-hidden">
+                            <span class="relative z-10 flex items-center gap-2">
+                                Launch Workspace
+                                <i class="fa-solid fa-rocket group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                            <!-- Subtle shine effect -->
+                            <div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-0"></div>
+                        </button>
+                        
+                        <p class="text-[12px] text-slate-500 font-medium text-center mt-6 p-4 rounded-xl bg-slate-800/20 border border-slate-700/30">
+                            <i class="fa-solid fa-shield-halved text-slate-400 mr-1"></i>
+                            By launching, you agree to our <a href="#" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">Terms of Service</a> and <a href="#" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">Privacy Policy</a>.
+                        </p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Subtle Footer -->
+            <div class="mt-8 text-center text-xs text-slate-500 slide-up-fade delay-400">
+                &copy; {{ date('Y') }} Mekong CyberUnit. All rights reserved.
+            </div>
         </div>
     </div>
     
