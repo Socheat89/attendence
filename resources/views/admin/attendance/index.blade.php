@@ -46,7 +46,7 @@
                     <option value="">All Employees</option>
                     @foreach($employees as $employee)
                         <option value="{{ $employee->id }}" @selected(request('employee_id')==$employee->id)>
-                            {{ $employee->employee_id }} - {{ $employee->user->name }}
+                            {{ $employee->employee_id }} - {{ $employee->user?->name ?? 'Unknown User' }}
                         </option>
                     @endforeach
                 </select>
@@ -122,7 +122,7 @@
                     @endphp
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="py-3 px-4">
-                            <div class="font-medium text-slate-800">{{ $log->employee->user->name }}</div>
+                            <div class="font-medium text-slate-800">{{ $log->employee->user?->name ?? 'Unknown User' }}</div>
                             <div class="text-xs text-slate-500">{{ $log->employee->employee_id }}</div>
                         </td>
                         <td class="py-3 px-4 text-sm text-slate-600">{{ $log->employee->branch?->name??'-' }}</td>
@@ -170,7 +170,7 @@
                 @forelse($rejectedLogs as $rejection)
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="py-3 px-4">
-                            <div class="font-medium text-slate-800">{{ $rejection->employee->user->name }}</div>
+                            <div class="font-medium text-slate-800">{{ $rejection->employee->user?->name ?? 'Unknown User' }}</div>
                             <div class="text-xs text-slate-500">{{ $rejection->employee->employee_id }}</div>
                         </td>
                         <td class="py-3 px-4 text-sm text-slate-600">{{ $rejection->branch?->name??'-' }}</td>
