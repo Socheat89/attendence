@@ -653,8 +653,8 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
         <h5>Support</h5>
         <ul>
           <li><a href="#">Help Center</a></li>
-          <li><a href="#">Terms</a></li>
-          <li><a href="#">Privacy</a></li>
+          <li><a href="{{ route('terms') }}">Terms</a></li>
+          <li><a href="{{ route('privacy') }}">Privacy</a></li>
           <li><a href="#">Status</a></li>
         </ul>
       </div>
