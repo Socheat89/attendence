@@ -311,33 +311,33 @@ class RegistrationController extends Controller
 
             DB::commit();
 
-            // Generate Invoice for paid subscriptions
-            if ($plan->price > 0) {
-                $paymentRequest = null;
-                if (request()->query('token')) {
-                    $paymentRequest = \App\Models\PaymentRequest::where('access_token', request()->query('token'))->first();
-                }
-                $invoiceMonths = $paymentRequest?->months ?? 1;
-                $invoiceAmount = $paymentRequest?->amount ?? ($plan->price * $invoiceMonths);
-                $invoiceContact = $paymentRequest?->contact ?? null;
-                $invoiceMethod  = $paymentRequest?->method ?? 'KHQR';
-
-                Invoice::create([
-                    'invoice_number'       => Invoice::generateNumber(),
-                    'company_id'           => $company->id,
-                    'subscription_plan_id' => $plan->id,
-                    'company_name'         => $company->name,
-                    'contact'              => $invoiceContact,
-                    'plan_name'            => $plan->name,
-                    'billing_cycle'        => $billingCycle,
-                    'months'               => $invoiceMonths,
-                    'amount'               => $invoiceAmount,
-                    'paid_at'              => now()->toDateString(),
-                    'valid_until'          => $expiryDate->toDateString(),
-                    'payment_method'       => $invoiceMethod,
-                    'status'               => 'paid',
-                ]);
+            // Generate Invoice for all subscriptions (including Free/Trial)
+            $paymentRequest = null;
+            if (request()->query('token')) {
+                $paymentRequest = \App\Models\PaymentRequest::where('access_token', request()->query('token'))->first();
             }
+
+            $isFree = ($plan->price <= 0);
+            $invoiceMonths = $paymentRequest?->months ?? ($isFree ? 1 : 1);
+            $invoiceAmount = $paymentRequest?->amount ?? ($plan->price * $invoiceMonths);
+            $invoiceContact = $paymentRequest?->contact ?? $user->email;
+            $invoiceMethod  = $paymentRequest?->method ?? ($isFree ? 'Free Subscription' : 'KHQR');
+
+            Invoice::create([
+                'invoice_number'       => Invoice::generateNumber(),
+                'company_id'           => $company->id,
+                'subscription_plan_id' => $plan->id,
+                'company_name'         => $company->name,
+                'contact'              => $invoiceContact,
+                'plan_name'            => $plan->name,
+                'billing_cycle'        => $billingCycle,
+                'months'               => $invoiceMonths,
+                'amount'               => $invoiceAmount,
+                'paid_at'              => now()->toDateString(),
+                'valid_until'          => $expiryDate->toDateString(),
+                'payment_method'       => $invoiceMethod,
+                'status'               => 'paid',
+            ]);
 
             // Log the new user in persistently
             Auth::login($user, true);
