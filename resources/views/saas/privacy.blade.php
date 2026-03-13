@@ -133,7 +133,7 @@
             <p>ប្រសិនបើអ្នកមានសំណួរអំពីគោលការណ៍ភាពឯកជន ឬ ចង់ស្នើសុំ Data Export:</p>
             <ul>
                 <li>អ៊ីមែល: <strong class="text-white">privacy@besthrm.app</strong></li>
-                <li>Telegram: <strong class="text-white">@MekongCyberUnit</strong></li>
+                <li>Telegram: <a href="https://t.me/SOCHEAT_DOEM" target="_blank" class="text-blue-400 hover:text-blue-300">@SOCHEAT_DOEM</a></li>
             </ul>
 
         </div>

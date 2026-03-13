@@ -113,7 +113,7 @@
             <p>ប្រសិនបើអ្នកមានសំណួរអំពីលក្ខខណ្ឌប្រើប្រាស់ទាំងនេះ សូមទំនាក់ទំនងមកយើង:</p>
             <ul>
                 <li>អ៊ីមែល: <strong class="text-white">support@besthrm.app</strong></li>
-                <li>Telegram: <strong class="text-white">@MekongCyberUnit</strong></li>
+                <li>Telegram: <a href="https://t.me/SOCHEAT_DOEM" target="_blank" class="text-blue-400 hover:text-blue-300">@SOCHEAT_DOEM</a></li>
             </ul>
 
         </div>
