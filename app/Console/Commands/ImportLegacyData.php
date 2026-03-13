@@ -18,6 +18,8 @@ class ImportLegacyData extends Command
         'attendance_sessions' => [],
     ];
 
+    protected $defaultBranchId = null;
+
     public function handle()
     {
         $filePath = $this->argument('file');
@@ -34,7 +36,7 @@ class ImportLegacyData extends Command
 
         $this->ensureCompanyExists($companyId);
 
-        $this->info("📖 កំពុងអាន File...");
+        $this->info("📖 កំពុងអាន File (ប្រហែលជាចំណាយពេលបន្តិច)...");
         $sqlContent = File::get($filePath);
 
         DB::beginTransaction();
@@ -42,12 +44,15 @@ class ImportLegacyData extends Command
             $this->idMaps['users'] = $this->importTable($sqlContent, 'users', $companyId, [$this, 'mapUser']);
             $this->idMaps['branches'] = $this->importTable($sqlContent, 'branches', $companyId, [$this, 'mapBranch']);
             
-            // ធានាថាមាន Branch យ៉ាងហោចណាស់មួយសម្រាប់ក្រុមហ៊ុននេះ
+            // Determine default branch
             if (empty($this->idMaps['branches'])) {
-                $defaultBranchId = DB::table('branches')->insertGetId([
-                    'company_id' => $companyId, 'name' => 'Default Branch', 'is_active' => 1
-                ]);
-                $this->defaultBranchId = $defaultBranchId;
+                $this->defaultBranchId = DB::table('branches')->where('company_id', $companyId)->value('id');
+                if (!$this->defaultBranchId) {
+                    $this->defaultBranchId = DB::table('branches')->insertGetId([
+                        'company_id' => $companyId, 'name' => 'Default Branch', 'is_active' => 1,
+                        'created_at' => now(), 'updated_at' => now()
+                    ]);
+                }
             } else {
                 $this->defaultBranchId = reset($this->idMaps['branches']);
             }
@@ -66,6 +71,7 @@ class ImportLegacyData extends Command
         } catch (\Exception $e) {
             DB::rollBack();
             $this->error("❌ បរាជ័យត្រង់: " . $e->getMessage());
+            $this->error("Line: " . $e->getLine());
             return Command::FAILURE;
         }
     }
@@ -83,17 +89,23 @@ class ImportLegacyData extends Command
     private function importTable($sql, $table, $companyId, $callback)
     {
         $this->comment("👉 កំពុងបញ្ចូល {$table}...");
+        // Handle multiple INSERT INTO statements for the same table
         $pattern = "/INSERT INTO `{$table}`.*VALUES\s*(.*);/isU";
         $mappings = [];
 
         if (preg_match_all($pattern, $sql, $matches)) {
             foreach ($matches[1] as $valuesBlock) {
+                // Split rows but handle cases where values might contain escaped characters
                 $rows = preg_split("/\),\s*\(/", trim($valuesBlock, "() "));
                 foreach ($rows as $row) {
                     $data = str_getcsv($row, ",", "'");
-                    $result = call_user_func($callback, $data, $companyId);
-                    if ($result) {
-                        $mappings[$this->clean($data[0])] = $result;
+                    try {
+                        $result = call_user_func($callback, $data, $companyId);
+                        if ($result) {
+                            $mappings[$this->clean($data[0])] = $result;
+                        }
+                    } catch (\Exception $e) {
+                        $this->warn("⚠️ មិនអាចបញ្ចូលមួយជួរក្នុង {$table}: " . $e->getMessage());
                     }
                 }
             }
@@ -102,18 +114,22 @@ class ImportLegacyData extends Command
     }
 
     private function clean($val) {
+        if ($val === null) return null;
         $val = trim($val, "' ");
         return ($val === 'NULL' || $val === '') ? null : $val;
     }
 
     private function mapUser($row, $companyId) {
-        if (count($row) < 5) return null;
+        if (count($row) < 3) return null;
+        $oldId = $this->clean($row[0]);
         $email = $this->clean($row[2]);
+        
         $user = DB::table('users')->where('email', $email)->first();
         if (!$user) {
             return DB::table('users')->insertGetId([
                 'name' => $this->clean($row[1]), 'email' => $email, 'password' => $this->clean($row[8]),
                 'company_id' => $companyId, 'is_active' => 1, 'created_at' => $this->clean($row[10]) ?? now(),
+                'updated_at' => $this->clean($row[11]) ?? now(),
             ]);
         }
         DB::table('users')->where('id', $user->id)->update(['company_id' => $companyId]);
@@ -123,7 +139,9 @@ class ImportLegacyData extends Command
     private function mapBranch($row, $companyId) {
         return DB::table('branches')->insertGetId([
             'company_id' => $companyId, 'name' => $this->clean($row[1]), 'address' => $this->clean($row[2]),
-            'latitude' => $this->clean($row[3]), 'longitude' => $this->clean($row[4]), 'is_active' => 1,
+            'latitude' => $this->clean($row[3]), 'longitude' => $this->clean($row[4]),
+            'allowed_radius_meters' => $this->clean($row[5]) ?? 200, 'is_active' => 1,
+            'created_at' => $this->clean($row[8]) ?? now(), 'updated_at' => $this->clean($row[9]) ?? now(),
         ]);
     }
 
@@ -135,19 +153,27 @@ class ImportLegacyData extends Command
         return DB::table('employees')->insertGetId([
             'company_id' => $companyId, 'user_id' => $this->idMaps['users'][$oldUserId],
             'employee_id' => $this->clean($row[2]),
+            'department_id' => null, // Legacy might not have departments mapped
             'branch_id' => $this->idMaps['branches'][$oldBranchId] ?? $this->defaultBranchId,
             'position' => $this->clean($row[5]), 'base_salary' => $this->clean($row[7]) ?? 0,
             'join_date' => $this->clean($row[11]),
+            'created_at' => $this->clean($row[13]) ?? now(), 'updated_at' => $this->clean($row[14]) ?? now(),
         ]);
     }
 
     private function mapSession($row, $companyId) {
         $oldEmpId = $this->clean($row[1]);
+        $oldBranchId = $this->clean($row[2]);
         if (!isset($this->idMaps['employees'][$oldEmpId])) return null;
+        
         return DB::table('attendance_sessions')->insertGetId([
             'company_id' => $companyId, 'employee_id' => $this->idMaps['employees'][$oldEmpId],
-            'branch_id' => $this->idMaps['branches'][$this->clean($row[2])] ?? $this->defaultBranchId,
-            'attendance_date' => $this->clean($row[3]), 'work_minutes' => $this->clean($row[6]) ?? 0,
+            'branch_id' => $this->idMaps['branches'][$oldBranchId] ?? $this->defaultBranchId,
+            'attendance_date' => $this->clean($row[3]), 
+            'late_minutes' => $this->clean($row[4]) ?? 0,
+            'early_leave_minutes' => $this->clean($row[5]) ?? 0,
+            'work_minutes' => $this->clean($row[6]) ?? 0,
+            'created_at' => $this->clean($row[9]) ?? now(), 'updated_at' => $this->clean($row[10]) ?? now(),
         ]);
     }
 
@@ -155,21 +181,38 @@ class ImportLegacyData extends Command
         $oldSessId = $this->clean($row[1]);
         $oldEmpId = $this->clean($row[2]);
         if (!isset($this->idMaps['attendance_sessions'][$oldSessId])) return null;
+        if (!isset($this->idMaps['employees'][$oldEmpId])) return null;
+
+        // SQL index: 4:scan_type, 5:scanned_at, 6:latitude, 7:longitude, 9:device_info, 10:ip_address, 11:qr_token
         return DB::table('attendance_logs')->insert([
-            'company_id' => $companyId, 'attendance_session_id' => $this->idMaps['attendance_sessions'][$oldSessId],
-            'employee_id' => $this->idMaps['employees'][$oldEmpId], 'scan_type' => $this->clean($row[4]),
+            'company_id' => $companyId, 
+            'attendance_session_id' => $this->idMaps['attendance_sessions'][$oldSessId],
+            'employee_id' => $this->idMaps['employees'][$oldEmpId], 
+            'scan_type' => $this->clean($row[4]),
             'scanned_at' => $this->clean($row[5]),
+            'latitude' => $this->clean($row[6]) ?? 0,
+            'longitude' => $this->clean($row[7]) ?? 0,
+            'device_info' => $this->clean($row[9]),
+            'ip_address' => $this->clean($row[10]),
+            'qr_token' => $this->clean($row[11]),
+            'created_at' => $this->clean($row[12]) ?? now(),
+            'updated_at' => $this->clean($row[13]) ?? now(),
         ]);
     }
 
     private function mapSchedule($row, $companyId) {
         $oldEmpId = $this->clean($row[2]);
+        $oldBranchId = $this->clean($row[1]);
         if (!isset($this->idMaps['employees'][$oldEmpId])) return null;
         return DB::table('schedules')->insert([
             'company_id' => $companyId, 'employee_id' => $this->idMaps['employees'][$oldEmpId],
-            'branch_id' => $this->idMaps['branches'][$this->clean($row[1])] ?? $this->defaultBranchId,
-            'day_of_week' => $this->clean($row[3]), 'morning_in' => $this->clean($row[4]),
+            'branch_id' => $this->idMaps['branches'][$oldBranchId] ?? $this->defaultBranchId,
+            'day_of_week' => $this->clean($row[3]), 
+            'morning_in' => $this->clean($row[4]),
+            'lunch_out' => $this->clean($row[5]),
+            'lunch_in' => $this->clean($row[6]),
             'evening_out' => $this->clean($row[7]),
+            'created_at' => $this->clean($row[10]) ?? now(), 'updated_at' => $this->clean($row[11]) ?? now(),
         ]);
     }
 }
