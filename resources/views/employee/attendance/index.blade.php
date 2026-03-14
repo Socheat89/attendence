@@ -319,6 +319,15 @@
     </div>
 
     <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const overlay = document.getElementById('sheetOverlay');
+        const container = document.getElementById('sheetContainer');
+        if (overlay && container) {
+            document.body.appendChild(overlay);
+            document.body.appendChild(container);
+        }
+    });
+
     function openSheet(dateStr, status, scansJson) {
         const date = new Date(dateStr);
         document.getElementById('sheetDate').textContent = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
