@@ -13,8 +13,8 @@
             </div>
         </div>
 
-        <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-xl overflow-hidden h-[600px] relative z-0">
-            <div id="map" class="w-full h-full"></div>
+        <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-xl overflow-hidden relative z-0" style="height: 600px; min-height: 600px;">
+            <div id="map" style="width: 100%; height: 100%; min-height: 600px;"></div>
         </div>
     </div>
 
