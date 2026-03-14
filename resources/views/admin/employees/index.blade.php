@@ -164,6 +164,11 @@
                                 <!-- Actions Column -->
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex items-center justify-end gap-2">
+                                        <!-- Scan History Button -->
+                                        <a href="{{ route('admin.employees.scan-history', $employee) }}" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="View Scan History">
+                                            <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                                        </a>
+
                                         <!-- Schedule Button -->
                                         <a href="{{ route('admin.employees.schedule.index', $employee) }}" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Manage Schedule">
                                             <i class="fa-regular fa-calendar-days text-lg"></i>

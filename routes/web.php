@@ -100,6 +100,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('employees/{employee}/schedule', [\App\Http\Controllers\Admin\EmployeeScheduleController::class, 'store'])->name('employees.schedule.store');
             Route::delete('employees/{employee}/schedule/{schedule}', [\App\Http\Controllers\Admin\EmployeeScheduleController::class, 'destroy'])->name('employees.schedule.destroy');
 
+            // Employee specific scan history
+            Route::get('employees/{employee}/scan-history', [\App\Http\Controllers\Admin\EmployeeController::class, 'scanHistory'])->name('employees.scan-history');
+
             Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription.index');
             Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'download'])->name('invoices.download');
             Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
