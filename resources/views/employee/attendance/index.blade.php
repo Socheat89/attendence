@@ -129,7 +129,7 @@
         .sheet-overlay {
             position: fixed; inset: 0;
             background: rgba(0,0,0,0.5);
-            z-index: 1000;
+            z-index: 1060;
             opacity: 0; pointer-events: none;
             transition: opacity 0.3s;
             backdrop-filter: blur(2px);
@@ -138,7 +138,7 @@
             position: fixed; left: 0; right: 0; bottom: 0;
             background: #fff;
             border-radius: 24px 24px 0 0;
-            z-index: 1001;
+            z-index: 1061;
             transform: translateY(100%);
             transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
             max-height: 85vh;
@@ -164,7 +164,7 @@
             margin-top: 0.5rem;
         }
 
-        .sheet-body { padding: 1.5rem; overflow-y: auto; }
+        .sheet-body { padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); overflow-y: auto; }
         
         .detail-row {
             display: flex; justify-content: space-between;
