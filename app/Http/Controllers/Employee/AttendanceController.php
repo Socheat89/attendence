@@ -207,6 +207,52 @@ class AttendanceController extends Controller
         }
     }
 
+    public function trackLocation(Request $request)
+    {
+        $validated = $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'accuracy' => 'nullable|numeric',
+            'speed' => 'nullable|numeric',
+            'heading' => 'nullable|numeric',
+        ]);
+
+        $employee = auth()->user()->employee;
+        
+        $session = \App\Models\AttendanceSession::query()
+            ->where('employee_id', $employee->id)
+            ->whereDate('attendance_date', now()->toDateString())
+            ->first();
+
+        if (!$session) {
+            // Not checked in yet
+            return response()->json(['message' => 'Not checked in yet.'], 403);
+        }
+
+        // Optional server-side guard: stop tracking if they have finished for the day
+        $hasCheckedOut = $session->logs()->whereIn('scan_type', ['evening_out', 'lunch_out'])->latest()->first();
+        // If they checked out (evening out) we stop completely. If lunch out, maybe pause? 
+        // We'll just stop if evening_out exists, or check the latest log.
+        // Let's just stop if evening_out exists.
+        $isEveningOut = $session->logs()->where('scan_type', 'evening_out')->exists();
+        if ($isEveningOut) {
+            return response()->json(['message' => 'Tracking stopped, already checked out.'], 403);
+        }
+
+        \App\Models\EmployeeLocation::create([
+            'employee_id'           => $employee->id,
+            'attendance_session_id' => $session->id,
+            'latitude'              => $validated['latitude'],
+            'longitude'             => $validated['longitude'],
+            'accuracy'              => $validated['accuracy'],
+            'speed'                 => $validated['speed'],
+            'heading'               => $validated['heading'],
+            'tracked_at'            => now(),
+        ]);
+
+        return response()->json(['status' => 'success', 'message' => 'Location tracked']);
+    }
+
     public function export(Request $request)
     {
         $employee = auth()->user()->employee;

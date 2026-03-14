@@ -93,6 +93,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/attendance-qr/{token}/image', [AttendanceQrController::class, 'qr'])->name('attendance-qr.image');
             Route::get('/attendance-qr/{token}/print', [AttendanceQrController::class, 'print'])->name('attendance-qr.print');
 
+            Route::get('/live-map', [\App\Http\Controllers\Admin\LiveMapController::class, 'index'])->name('live-map.index');
+            Route::get('/live-map/data', [\App\Http\Controllers\Admin\LiveMapController::class, 'data'])->name('live-map.data');
+
             Route::resource('schedules', ScheduleController::class)->except(['show']);
 
             // Employee specific schedule management
@@ -117,6 +120,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
             Route::get('/attendance/scan', [AttendanceController::class, 'scan'])->name('attendance.scan');
             Route::post('/attendance/scan', [AttendanceController::class, 'store'])->name('attendance.store');
+            Route::post('/attendance/track-location', [AttendanceController::class, 'trackLocation'])->name('attendance.track-location');
             Route::get('/attendance/export', [AttendanceController::class, 'export'])->name('attendance.export');
 
             Route::get('/leave', [LeaveController::class, 'index'])->name('leave.index');

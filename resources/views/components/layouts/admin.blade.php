@@ -99,10 +99,10 @@
                 </div>
 
                 <!-- Attendance Group -->
-                <div x-data="{ open: {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') ? 'true' : 'false' }} }" class="space-y-1">
-                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                <div x-data="{ open: {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
-                            <i class="fa-solid fa-clock w-5 h-5 mr-3 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
+                            <i class="fa-solid fa-clock w-5 h-5 mr-3 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
                             Attendance
                         </span>
                         <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
@@ -115,6 +115,10 @@
                         <a href="{{ route('admin.attendance-qr.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.attendance-qr.index') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.attendance-qr.index') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
                             QR Manager
+                        </a>
+                        <a href="{{ route('admin.live-map.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.live-map.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.live-map.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            Live Map
                         </a>
                     </div>
                 </div>

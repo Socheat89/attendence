@@ -1134,6 +1134,68 @@ document.querySelectorAll('.bottom-nav a, .emp-topbar a').forEach(link => {
         setTimeout(() => { window.location.href = href; }, 180);
     });
 });
+
+// ── Background Location Tracking ──
+(function() {
+    let trackingInterval = null;
+
+    function startLocationTracking() {
+        if (!navigator.geolocation) return;
+
+        // Optional: stop attempting if we know we are checked out
+        if (localStorage.getItem('stop_location_tracking') === new Date().toDateString()) {
+            return;
+        }
+
+        const sendLocation = () => {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const data = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
+                        speed: position.coords.speed,
+                        heading: position.coords.heading,
+                    };
+
+                    const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+                    if (!csrfTokenMeta) return;
+
+                    fetch('/employee/attendance/track-location', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfTokenMeta.content,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    }).then(response => {
+                        if (response.status === 403) {
+                            // Either not checked in yet, or already checked out.
+                            response.json().then(res => {
+                                if (res.message && res.message.includes('already checked out')) {
+                                    clearInterval(trackingInterval);
+                                    localStorage.setItem('stop_location_tracking', new Date().toDateString());
+                                }
+                            }).catch(() => {});
+                        }
+                    }).catch(e => console.log('Location track error', e));
+                },
+                (error) => {
+                    // Could not get location, ignore
+                },
+                { enableHighAccuracy: true, maximumAge: 0 }
+            );
+        };
+
+        // If not stopped, send immediately and then every 2 minutes (120,000ms)
+        sendLocation();
+        trackingInterval = setInterval(sendLocation, 120000);
+    }
+
+    startLocationTracking();
+})();
+
 </script>
 </body>
 </html>
