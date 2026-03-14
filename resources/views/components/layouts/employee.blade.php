@@ -386,14 +386,14 @@
         }
 
         .brand-title {
-            color: #fff;
+            color: var(--ink);
             font-weight: 700;
             font-size: 0.92rem;
             line-height: 1.1;
         }
 
         .brand-subtitle {
-            color: rgba(180, 204, 230, 0.85);
+            color: var(--muted);
             font-size: 0.72rem;
             font-weight: 500;
             line-height: 1.3;
