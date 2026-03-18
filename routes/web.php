@@ -31,6 +31,17 @@ Route::post('/register-company/{plan}', [\App\Http\Controllers\Saas\Registration
 Route::get('/terms', fn() => view('saas.terms'))->name('terms');
 Route::get('/privacy', fn() => view('saas.privacy'))->name('privacy');
 
+// Quick setup route for Hosting Server
+Route::get('/hosting-setup', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        return 'Success: Storage linked and Cache cleared! <br> You can remove this route for security.';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
+
 Route::get('/', function () {
     if (! auth()->check()) {
         $plans = \App\Models\SubscriptionPlan::where('is_active', true)->orderBy('price')->get();

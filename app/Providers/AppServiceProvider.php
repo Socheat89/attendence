@@ -37,14 +37,19 @@ class AppServiceProvider extends ServiceProvider
             // assets/routes/forms are generated with the correct scheme and hostname.
             $root = request()->getSchemeAndHttpHost();
             if ($root) {
-                \URL::forceRootUrl($root);
-                \URL::forceScheme(request()->getScheme());
+                \Illuminate\Support\Facades\URL::forceRootUrl($root);
+                \Illuminate\Support\Facades\URL::forceScheme(request()->getScheme());
             } else {
                 // fallback to configured app.url if no request available
-                \URL::forceRootUrl(config('app.url'));
+                \Illuminate\Support\Facades\URL::forceRootUrl(config('app.url'));
                 if (str_starts_with(config('app.url'), 'https://')) {
-                    \URL::forceScheme('https');
+                    \Illuminate\Support\Facades\URL::forceScheme('https');
                 }
+            }
+            
+            // Force HTTPS on hosting environments
+            if (config('app.env') === 'production') {
+                \Illuminate\Support\Facades\URL::forceScheme('https');
             }
         }
 

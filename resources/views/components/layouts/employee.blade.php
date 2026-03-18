@@ -920,12 +920,12 @@
 @php($navCount = $showSalary ? 5 : 4)
 @php($routeName = request()->route()?->getName())
 @php($routeDetails = [
-    'employee.dashboard' => ['Dashboard', 'Track your attendance status and performance for today.'],
-    'employee.attendance.scan' => ['Scan Attendance', 'Submit your next check-in with live location details.'],
-    'employee.attendance.index' => ['My Attendance', 'Review calendar activity, logs, and monthly totals.'],
-    'employee.leave.index' => ['My Requests', 'Create new leave, overtime, and dayoff requests.'],
-    'employee.salary.index' => ['My Salary', 'View payroll history, details, and downloadable payslips.'],
-    'profile.edit' => ['Profile', 'Manage personal details, password, and account security.'],
+    'employee.dashboard' => ['ផ្ទាំងគ្រប់គ្រង (Dashboard)', 'តាមដានស្ថានភាពវត្តមាននិងប្រសិទ្ធភាពការងារប្រចាំថ្ងៃ (Track attendance from dashboard).'],
+    'employee.attendance.scan' => ['ស្កេនវត្តមាន (Scan Attendance)', 'គោះម៉ោងជាមួយនឹងទីតាំងពិតប្រាកដរបស់អ្នក (Submit next check-in with location).'],
+    'employee.attendance.index' => ['វត្តមានរបស់ខ្ញុំ (My Attendance)', 'ពិនិត្យសកម្មភាពប្រចាំខែ និងប្រវត្តិស្កេន (Review calendar activity and logs).'],
+    'employee.leave.index' => ['សំណើរបស់ខ្ញុំ (My Requests)', 'បង្កើតសំណើច្បាប់ឈប់សម្រាក ថែមម៉ោង ឬប្តូរថ្ងៃ (Create new leave or dayoff requests).'],
+    'employee.salary.index' => ['ប្រាក់ខែរបស់ខ្ញុំ (My Salary)', 'ពិនិត្យប្រវត្តិប្រាក់ខែ និងទាញយកសន្លឹកបើកប្រាក់ខែ (View payroll history and details).'],
+    'profile.edit' => ['គណនី (Profile)', 'គ្រប់គ្រងព័ត៌មានផ្ទាល់ខ្លួន និងសុវត្ថិភាព (Manage personal details and security).'],
 ])
 @php([$fallbackTitle, $fallbackDescription] = $routeDetails[$routeName] ?? ['Employee Panel', 'Manage daily HR actions from one workspace.'])
 
@@ -941,13 +941,13 @@
         <div class="top-actions">
             <a href="{{ route('profile.edit') }}">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:3px"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                Profile
+                គណនី (Profile)
             </a>
             <form method="POST" action="{{ route('logout') }}" style="margin:0">
                 @csrf
                 <button type="submit">
                     <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:3px"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                    Logout
+                    ចាកចេញ (Logout)
                 </button>
             </form>
         </div>
@@ -969,24 +969,24 @@
     <nav class="bottom-nav" style="--nav-count: {{ $navCount }};">
         <a href="{{ route('employee.dashboard') }}" class="{{ request()->routeIs('employee.dashboard') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            <span>Home</span>
+            <span>ទំព័រដើម</span>
         </a>
         <a href="{{ route('employee.attendance.scan') }}" class="{{ request()->routeIs('employee.attendance.scan') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="5" height="5" rx="1"/><rect x="16" y="3" width="5" height="5" rx="1"/><rect x="3" y="16" width="5" height="5" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
-            <span>Scan</span>
+            <span>ស្កេន</span>
         </a>
         <a href="{{ route('employee.attendance.index') }}" class="{{ request()->routeIs('employee.attendance.index') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <span>Attendance</span>
+            <span>វត្តមាន</span>
         </a>
         <a href="{{ route('employee.leave.index') }}" class="{{ request()->routeIs('employee.leave.*', 'employee.overtime.*', 'employee.changedayoff.*') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-            <span>Requests</span>
+            <span>សំណើ</span>
         </a>
         @if($showSalary)
             <a href="{{ route('employee.salary.index') }}" class="{{ request()->routeIs('employee.salary.*') ? 'active' : '' }}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                <span>Salary</span>
+                <span>ប្រាក់ខែ</span>
             </a>
         @endif
     </nav>
