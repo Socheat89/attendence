@@ -260,11 +260,71 @@
                         </div>
                     </div>
 
-                    <!-- Notifications (Placeholder) -->
-                    <button class="relative text-slate-400 hover:text-slate-600 transition-colors">
-                        <i class="fa-regular fa-bell text-xl"></i>
-                        <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                    </button>
+                    <!-- Notifications -->
+                    <div class="relative" x-data="{ 
+                        notifOpen: false, 
+                        unreadCount: {{ auth()->user()->unreadNotifications->count() }} 
+                    }">
+                        <button @click="notifOpen = !notifOpen" @click.away="notifOpen = false" 
+                            class="relative p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all focus:outline-none">
+                            <i class="fa-regular fa-bell text-xl"></i>
+                            <template x-if="unreadCount > 0">
+                                <span class="absolute top-1.5 right-1.5 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white animate-pulse"></span>
+                            </template>
+                        </button>
+
+                        <!-- Notification Dropdown -->
+                        <div x-show="notifOpen" x-cloak
+                             x-transition:enter="transition ease-out duration-150" 
+                             x-transition:enter-start="transform opacity-0 scale-95 translate-y-2" 
+                             x-transition:enter-end="transform opacity-100 scale-100 translate-y-0" 
+                             x-transition:leave="transition ease-in duration-100" 
+                             x-transition:leave-start="transform opacity-100 scale-100" 
+                             x-transition:leave-end="transform opacity-0 scale-95" 
+                             class="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl bg-white shadow-2xl border border-slate-100 z-50 overflow-hidden">
+                            
+                            <div class="px-5 py-4 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                                <h3 class="text-sm font-bold text-slate-800">{{ __('Notifications') }}</h3>
+                                <template x-if="unreadCount > 0">
+                                    <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold" x-text="unreadCount + ' New'"></span>
+                                </template>
+                            </div>
+
+                            <div class="max-h-[400px] overflow-y-auto custom-scrollbar">
+                                @forelse(auth()->user()->notifications->take(10) as $notification)
+                                    <a href="{{ $notification->data['link'] ?? '#' }}" class="block px-5 py-4 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 {{ $notification->read_at ? 'opacity-60' : '' }}">
+                                        <div class="flex gap-4">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-xl {{ $notification->data['color'] ?? 'bg-blue-100 text-blue-600' }} flex items-center justify-center text-lg">
+                                                <i class="{{ $notification->data['icon'] ?? 'fa-solid fa-bell' }}"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-sm font-bold text-slate-800 leading-tight mb-1">{{ $notification->data['title'] ?? 'New Update' }}</p>
+                                                <p class="text-xs text-slate-500 line-clamp-2">{{ $notification->data['message'] ?? 'You have a new notification.' }}</p>
+                                                <p class="text-[10px] text-slate-400 mt-2 font-medium">{{ $notification->created_at->diffForHumans() }}</p>
+                                            </div>
+                                            @if(!$notification->read_at)
+                                                <div class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shadow-sm shadow-blue-500/50"></div>
+                                            @endif
+                                        </div>
+                                    </a>
+                                @empty
+                                    <div class="py-12 text-center">
+                                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i class="fa-regular fa-bell-slash text-2xl text-slate-400"></i>
+                                        </div>
+                                        <p class="text-sm font-bold text-slate-800">{{ __('All caught up!') }}</p>
+                                        <p class="text-xs text-slate-500 mt-1">{{ __('No new notifications at the moment.') }}</p>
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            @if(auth()->user()->notifications->count() > 0)
+                                <div class="p-3 border-t border-slate-50 text-center bg-slate-50/30">
+                                    <a href="#" class="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors">{{ __('View All Notifications') }}</a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
 
                     <!-- Profile Dropdown -->
                     <div class="relative" x-data="{ userMenuOpen: false, profileModalOpen: false }">
