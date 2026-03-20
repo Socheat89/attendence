@@ -7,11 +7,12 @@
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="{{ $uiCompanySetting->company_name ?? 'Mekong HRM' }}">
+    <meta name="apple-mobile-web-app-title" content="{{ $uiCompanySetting->company_name ?? config('app.name') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/icons/icon-192x192.png') }}">
     <meta name="mobile-web-app-capable" content="yes">
 
-    <title>{{ config('app.name', 'HRM') }} - Admin</title>
+    <title>{{ $uiCompanySetting->company_name ?? config('app.name') }} - {{ __('Admin') }}</title>
+    <link rel="icon" type="image/png" href="https://ui-avatars.com/api/?name={{ urlencode($uiCompanySetting->company_name ?? config('app.name')) }}&background=0D8ABC&color=fff&rounded=true" />
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
