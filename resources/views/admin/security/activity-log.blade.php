@@ -115,7 +115,7 @@
                 </table>
             </div>
             <div class="px-6 py-4 border-t border-slate-50">
-                {{ $logs->links() }}
+                {{ $logs->links('pagination::tailwind') }}
             </div>
         </div>
     </div>

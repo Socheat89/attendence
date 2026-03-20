@@ -63,6 +63,6 @@
             @endforelse
         </div>
 
-        {{ $notifications->links() }}
+        {{ $notifications->links('pagination::tailwind') }}
     </div>
 </x-layouts.admin>
