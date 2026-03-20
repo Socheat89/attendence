@@ -271,11 +271,15 @@
                     
                     <!-- Breadcrumbs (Simplified) -->
                      <h1 class="text-xl font-bold text-slate-800 tracking-tight">
-                        @if(request()->routeIs('admin.dashboard')) Dashboard
-                        @elseif(request()->routeIs('admin.employees.*')) Employees
-                        @elseif(request()->routeIs('admin.attendance.*')) Attendance
-                        @elseif(request()->routeIs('admin.payrolls.*')) Payroll
-                        @else {{ config('app.name') }} @endif
+                        @if(request()->routeIs('admin.dashboard')) {{ __('Dashboard') }}
+                        @elseif(request()->routeIs('admin.employees.*')) {{ __('Employees') }}
+                        @elseif(request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*')) {{ __('Attendance') }}
+                        @elseif(request()->routeIs('admin.payrolls.*')) {{ __('Payroll') }}
+                        @elseif(request()->routeIs('admin.performance.*')) {{ __('Performance') }}
+                        @elseif(request()->routeIs('admin.security.*') || request()->routeIs('two-factor.*')) {{ __('Security') }}
+                        @elseif(request()->routeIs('admin.notifications.*')) {{ __('Notifications') }}
+                        @elseif(request()->routeIs('admin.leave*') || request()->routeIs('admin.overtime*')) {{ __('Requests') }}
+                        @else {{ auth()->user()->company->name ?? 'Administration' }} @endif
                     </h1>
                 </div>
                 
