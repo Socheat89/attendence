@@ -9,6 +9,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="vapid-pub-key" content="{{ config('webpush.vapid.public_key') }}">
     <meta name="theme-color" content="{{ $uiCompanySetting->primary_color ?? '#0f4c81' }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     {{-- Apple/iOS PWA Meta Tags --}}
@@ -1126,8 +1127,59 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then(reg => {
             console.log('SW registered:', reg.scope);
+            checkAndSubscribePush();
         }).catch(() => {});
     });
+}
+
+function urlB64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }
+    return outputArray;
+}
+
+function checkAndSubscribePush() {
+    setTimeout(() => {
+        if ('Notification' in window) {
+            if (Notification.permission === 'granted') {
+                subscribeUserToPush();
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(status => {
+                    if (status === 'granted') subscribeUserToPush();
+                });
+            }
+        }
+    }, 4000); // Ask after 4s so it's not obtrusive right immediately
+}
+
+function subscribeUserToPush() {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        navigator.serviceWorker.ready.then(function(registration) {
+            const vapidKeyMeta = document.querySelector('meta[name="vapid-pub-key"]');
+            if (!vapidKeyMeta || !vapidKeyMeta.content) return;
+            
+            registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlB64ToUint8Array(vapidKeyMeta.content)
+            }).then(function(subscription) {
+                // Send subscription to backend
+                fetch('/push-subscriptions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(subscription)
+                });
+            }).catch(function(err) {
+                console.log('Failed to subscribe the user: ', err);
+            });
+        });
+    }
 }
 
 // ── PWA Install Prompt ──

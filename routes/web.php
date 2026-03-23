@@ -221,6 +221,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/users/{user}/photo', ProfilePhotoController::class)->name('users.photo');
 
+    // ─── Web Push Subscription ────────────────────────────────────────────
+    Route::post('/push-subscriptions', [\App\Http\Controllers\PushSubscriptionController::class, 'store'])->name('push-subscriptions.store');
+
     // ─── 2FA Setup (authenticated) ───────────────────────────────────────────
     Route::get('/two-factor/setup',   [\App\Http\Controllers\Auth\TwoFactorController::class, 'setup'])->name('two-factor.setup');
     Route::post('/two-factor/enable', [\App\Http\Controllers\Auth\TwoFactorController::class, 'enable'])->name('two-factor.enable');

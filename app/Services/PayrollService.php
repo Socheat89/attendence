@@ -81,6 +81,10 @@ class PayrollService
                 ['type' => 'deduction', 'label' => 'Leave Deduction', 'amount' => round($leaveDeduction, 2)],
             ]);
 
+            if ($employee->user) {
+                $employee->user->notify(new \App\Notifications\PayrollGeneratedNotification($payroll));
+            }
+
             return $payroll;
         });
     }
