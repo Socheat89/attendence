@@ -110,6 +110,52 @@
         </div>
     </div>
 
+    <!-- Localization Tab -->
+    <div class="card mb-4 border-0 shadow-sm" style="border-radius: 1.5rem; overflow: hidden; background: #fff;">
+        <div class="card-body p-4 p-md-5">
+            <div class="d-flex align-items-center mb-4 gap-3 pb-3" style="border-bottom: 1px solid #f1f5f9;">
+                <div style="width: 44px; height: 44px; border-radius: 14px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
+                    <i class="fa-solid fa-language"></i>
+                </div>
+                <div>
+                    <h5 class="mb-0" style="font-weight: 800; color: #0f172a;">Language Preferences</h5>
+                    <p class="mb-0 text-muted" style="font-size: 0.8rem; font-weight: 500;">Select your preferred language for the application</p>
+                </div>
+            </div>
+            
+            <div class="row g-3">
+                <div class="col-6">
+                    <a href="{{ route('lang.switch', 'en') }}" style="display: block; text-decoration: none; padding: 1.25rem; border-radius: 1rem; border: 2px solid {{ app()->getLocale() == 'en' ? '#2563eb' : '#e2e8f0' }}; background: {{ app()->getLocale() == 'en' ? '#f0f9ff' : '#fff' }}; transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span style="font-size: 1.8rem; line-height: 1;">🇬🇧</span>
+                            @if(app()->getLocale() == 'en')
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: #2563eb; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            @endif
+                        </div>
+                        <h6 style="margin: 0; font-weight: 800; color: {{ app()->getLocale() == 'en' ? '#1d4ed8' : '#334155' }};">English</h6>
+                        <span style="font-size: 0.75rem; font-weight: 600; color: #94a3b8;">International</span>
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a href="{{ route('lang.switch', 'km') }}" style="display: block; text-decoration: none; padding: 1.25rem; border-radius: 1rem; border: 2px solid {{ app()->getLocale() == 'km' ? '#2563eb' : '#e2e8f0' }}; background: {{ app()->getLocale() == 'km' ? '#f0f9ff' : '#fff' }}; transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span style="font-size: 1.8rem; line-height: 1;">🇰🇭</span>
+                            @if(app()->getLocale() == 'km')
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: #2563eb; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            @endif
+                        </div>
+                        <h6 style="margin: 0; font-weight: 800; color: {{ app()->getLocale() == 'km' ? '#1d4ed8' : '#334155' }};">ភាសាខ្មែរ</h6>
+                        <span style="font-size: 0.75rem; font-weight: 600; color: #94a3b8;">Khmer</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Terminal Sign Out Button -->
     <form method="POST" action="{{ route('logout') }}" class="mb-2">
         @csrf
