@@ -28,7 +28,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="{{ asset('vendor/bootstrap/bootstrap.min.css', true) }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         :root {
@@ -1003,10 +1002,10 @@
                 </div>
             </div>
             
-            <button x-data x-on:click="$dispatch('open-modal', 'profile-modal')" type="button">
+            <a href="{{ route('profile.edit') }}">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:3px"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                 {{ __('Profile') }}
-            </button>
+            </a>
             <form method="POST" action="{{ route('logout') }}" style="margin:0">
                 @csrf
                 <button type="submit">
@@ -1057,8 +1056,6 @@
 
 
 </div>
-
-<x-profile-modal />
 
 <!-- PWA Install Banner -->
 <div id="pwa-install-banner" style="display:none; position:fixed; bottom:calc(var(--nav-h, 70px) + 8px); left:12px; right:12px; z-index:1070;

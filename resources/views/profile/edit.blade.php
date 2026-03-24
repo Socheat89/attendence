@@ -24,10 +24,13 @@
                 </div>
                 
                 <div class="flex-shrink-0">
-                    <div class="relative group">
+                    <div class="relative group cursor-pointer" onclick="document.getElementById('pagePhotoInput').click()">
                         <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[28px] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                        <div class="relative w-24 h-24 rounded-[24px] bg-white shadow-xl flex items-center justify-center text-blue-600 border border-slate-100 overflow-hidden">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=3b82f6&color=fff&size=128" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                        <div class="relative w-24 h-24 rounded-[24px] bg-white shadow-xl flex items-center justify-center border border-slate-100 overflow-hidden">
+                            <img id="avatarPreview" src="{{ Auth::user()->photo_path ? route('users.photo', Auth::user()) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=3b82f6&color=fff&size=128' }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fa-solid fa-camera text-white text-xl"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -120,9 +123,12 @@
                     </div>
                     
                     <div class="p-10">
-                        <form method="POST" action="{{ route('profile.update') }}" class="space-y-8">
+                        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-8">
                             @csrf
                             @method('PATCH')
+                            
+                            <!-- Hidden Photo Input mapping to outer avatar -->
+                            <input type="file" name="photo" id="pagePhotoInput" class="hidden" accept="image/*" onchange="if(this.files[0]) document.getElementById('avatarPreview').src = URL.createObjectURL(this.files[0])">
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div class="space-y-2">
