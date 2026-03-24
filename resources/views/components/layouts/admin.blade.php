@@ -60,6 +60,19 @@
 
             <!-- Navigation -->
             <nav class="flex-1 space-y-1 px-4 py-6">
+                @php
+                    $user = auth()->user();
+                    $isSuperAdmin = $user->hasRole('Super Admin');
+                    $hrPerms = [];
+                    if (!$isSuperAdmin && $user->hasRole('Admin / HR')) {
+                        $settingPerms = $uiCompanySetting->hr_permissions ?? [];
+                        $hrPerms = is_string($settingPerms) ? json_decode($settingPerms, true) : $settingPerms;
+                        if (!is_array($hrPerms)) $hrPerms = [];
+                    }
+                    $canAccess = function($module) use ($isSuperAdmin, $hrPerms) {
+                        return $isSuperAdmin || in_array($module, $hrPerms);
+                    };
+                @endphp
                 
                 <div class="mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Dashboards</div>
                 
@@ -67,15 +80,23 @@
                     <i class="fa-solid fa-chart-pie w-5 h-5 mr-3 {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
                     Overview
                 </a>
+                
+                @if($canAccess('attendance') || $canAccess('payrolls'))
+                <a href="{{ route('admin.reports.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.reports.index') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                    <i class="fa-solid fa-file-invoice w-5 h-5 mr-3 {{ request()->routeIs('admin.reports.index') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
+                    Reports
+                </a>
+                @endif
 
 
                 <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">People</div>
 
                 <!-- Employees Group -->
-                <div x-data="{ open: {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') ? 'true' : 'false' }} }" class="space-y-1">
-                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                @if($canAccess('employees'))
+                <div x-data="{ open: {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') || request()->routeIs('admin.schedules.*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') || request()->routeIs('admin.schedules.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
-                            <i class="fa-solid fa-users w-5 h-5 mr-3 {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
+                            <i class="fa-solid fa-users w-5 h-5 mr-3 {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') || request()->routeIs('admin.schedules.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
                             Employees
                         </span>
                         <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
@@ -89,14 +110,20 @@
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.departments.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
                             Departments
                         </a>
+                        <a href="{{ route('admin.schedules.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.schedules.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.schedules.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            Schedules
+                        </a>
                     </div>
                 </div>
+                @endif
 
                 <!-- Attendance Group -->
-                <div x-data="{ open: {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') ? 'true' : 'false' }} }" class="space-y-1">
-                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                @if($canAccess('attendance'))
+                <div x-data="{ open: {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
-                            <i class="fa-solid fa-clock w-5 h-5 mr-3 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
+                            <i class="fa-solid fa-clock w-5 h-5 mr-3 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
                             Attendance
                         </span>
                         <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
@@ -110,10 +137,16 @@
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.attendance-qr.index') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
                             QR Manager
                         </a>
+                        <a href="{{ route('admin.live-map.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.live-map.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.live-map.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            Live Map
+                        </a>
                     </div>
                 </div>
+                @endif
 
                 <!-- Requests Group -->
+                @if($canAccess('requests'))
                 <div x-data="{ open: {{ request()->routeIs('admin.leave-requests.*') || request()->routeIs('admin.leave-types.*') || request()->routeIs('admin.overtime-requests.*') || request()->routeIs('admin.change-dayoff-requests.*') ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.leave-requests.*') || request()->routeIs('admin.leave-types.*') || request()->routeIs('admin.overtime-requests.*') || request()->routeIs('admin.change-dayoff-requests.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
@@ -127,6 +160,10 @@
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.leave-requests.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
                             Leave
                         </a>
+                        <a href="{{ route('admin.leave-types.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.leave-types.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.leave-types.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            Leave Types
+                        </a>
                         <a href="{{ route('admin.overtime-requests.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.overtime-requests.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.overtime-requests.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
                             Overtime
@@ -137,20 +174,77 @@
                         </a>
                     </div>
                 </div>
+                @endif
 
+                @if($canAccess('payrolls'))
                 <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Finance</div>
-
                 <a href="{{ route('admin.payrolls.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.payrolls.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                     <i class="fa-solid fa-money-bill-wave w-5 h-5 mr-3 {{ request()->routeIs('admin.payrolls.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
                     Payroll
                 </a>
+                @endif
 
-                @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin / HR']))
+                @if($canAccess('performance'))
+                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Performance</div>
+                <div x-data="{ open: {{ request()->routeIs('admin.performance.*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.performance.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <span class="flex items-center">
+                            <i class="fa-solid fa-chart-line w-5 h-5 mr-3 {{ request()->routeIs('admin.performance.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
+                            Performance
+                        </span>
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                    <div x-show="open" x-collapse class="pl-4 space-y-1">
+                         <a href="{{ route('admin.performance.kpi.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.performance.kpi.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.performance.kpi.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            KPI Setup
+                        </a>
+                        <a href="{{ route('admin.performance.evaluations.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.performance.evaluations.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.performance.evaluations.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            Evaluations
+                        </a>
+                    </div>
+                </div>
+                @endif
+
+                @if($canAccess('security'))
+                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Security</div>
+                <div x-data="{ open: {{ request()->routeIs('admin.security.*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.security.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <span class="flex items-center">
+                            <i class="fa-solid fa-shield-halved w-5 h-5 mr-3 {{ request()->routeIs('admin.security.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
+                            Security
+                        </span>
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                    <div x-show="open" x-collapse class="pl-4 space-y-1">
+                         <a href="{{ route('admin.security.activity-log') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.security.activity-log') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.security.activity-log') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            Activity Log
+                        </a>
+                        <a href="{{ route('admin.security.ip-whitelist.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.security.ip-whitelist.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.security.ip-whitelist.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            IP Whitelist
+                        </a>
+                        <a href="{{ route('admin.security.backup.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.security.backup.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.security.backup.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            Backups
+                        </a>
+                    </div>
+                </div>
+                @endif
+
+                @if($canAccess('settings'))
                     <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Administration</div>
                     
                     <a href="{{ route('admin.branches.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.branches.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <i class="fa-solid fa-building w-5 h-5 mr-3 {{ request()->routeIs('admin.branches.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
                         Branches
+                    </a>
+
+                    <a href="{{ route('admin.subscription.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.subscription.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <i class="fa-solid fa-credit-card w-5 h-5 mr-3 {{ request()->routeIs('admin.subscription.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
+                        Subscription
                     </a>
 
                     <a href="{{ route('admin.settings.edit') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.settings.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
