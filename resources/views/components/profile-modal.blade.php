@@ -1,6 +1,6 @@
 <x-modal name="profile-modal" maxWidth="2xl">
     <div x-data="{ activeTab: 'profile' }" 
-         class="relative bg-slate-950 rounded-2xl overflow-hidden shadow-2xl border border-white/5 group">
+         class="relative bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-white/5 group">
         
         <!-- Sophisticated Linear Background Glow -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
@@ -11,7 +11,7 @@
         <div class="relative z-10 flex flex-col h-full uppercase tracking-tighter">
             
             <!-- Minimalist Top Bar -->
-            <div class="flex items-center justify-between px-8 py-6 border-b border-white/5 bg-slate-900/50">
+            <div class="flex items-center justify-between px-8 py-6 border-b border-white/5 bg-slate-800">
                 <div class="flex items-center gap-4">
                     <div class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse shadow-md shadow-indigo-500/50"></div>
                     <span class="text-xs font-black text-white/40 tracking-widest uppercase">{{ __('System // Core_Identity') }}</span>
@@ -24,7 +24,7 @@
             <div class="flex flex-col md:flex-row min-h-[500px]">
                 
                 <!-- Sidebar Navigation (Raycast Style) -->
-                <div class="w-full md:w-64 border-r border-white/5 p-6 space-y-2 bg-black/20">
+                <div class="w-full md:w-64 border-r border-white/5 p-6 space-y-2 bg-slate-800">
                     <button @click="activeTab = 'profile'"
                             :class="activeTab === 'profile' ? 'bg-white/5 text-white border border-white/10' : 'text-white/40 hover:text-white hover:bg-white/[0.02] border border-transparent'"
                             class="w-full px-5 py-3 rounded-xl text-xs font-black transition-all flex items-center justify-between group/nav">
@@ -46,7 +46,7 @@
                 </div>
 
                 <!-- Main Content (Linear Bento Style) -->
-                <div class="flex-1 p-10 bg-black/10 overflow-y-auto custom-scrollbar">
+                <div class="flex-1 p-10 bg-slate-900 overflow-y-auto custom-scrollbar">
                     
                     <!-- Tab: Profile -->
                     <div x-show="activeTab === 'profile'" 
@@ -178,7 +178,7 @@
             </div>
 
             <!-- Sleek Bar Footer -->
-            <div class="px-8 py-6 border-t border-white/5 bg-slate-900/50 flex items-center justify-between text-xs font-black text-white/40 tracking-widest uppercase">
+            <div class="px-8 py-6 border-t border-white/5 bg-slate-800 flex items-center justify-between text-xs font-black text-white/40 tracking-widest uppercase">
                 <span>{{ __('Authorized // Mekong.CyberUnit') }}</span>
                 <div class="flex items-center gap-6">
                     <span class="text-white/20">v.4.0.0_STABLE</span>
