@@ -23,7 +23,9 @@ class TelegramAttendanceNotifier
                 return;
             }
 
-            $botToken = trim((string) config('services.telegram.bot_token'));
+            // Prefer bot token stored in DB (the one actually connected to the group),
+            // fall back to the global env token.
+            $botToken = trim((string) ($setting->telegram_bot_token ?: config('services.telegram.bot_token')));
             $chatId = trim((string) $setting->telegram_chat_id);
 
             if ($botToken === '' || $chatId === '') {
