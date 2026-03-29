@@ -384,12 +384,48 @@ document.addEventListener('DOMContentLoaded', () => {
     if(typeOptOut) typeOptOut.addEventListener('click',()=>setActiveType(NEXT_CO));
     setActiveType(AUTO_DEFAULT);
 
+    // GPS pre-fetched location (filled as soon as camera opens)
+    let _gpsReady = false;
+
+    function prefetchGps(){
+        if(!navigator.geolocation) return;
+        // Fast first: allow 30s cache + low accuracy → fills within ~1s on most phones
+        navigator.geolocation.getCurrentPosition(
+            pos=>{
+                latInp.value=pos.coords.latitude.toFixed(6);
+                lngInp.value=pos.coords.longitude.toFixed(6);
+                _gpsReady=true;
+            },
+            ()=>{}, // silent — will retry at submit time
+            {enableHighAccuracy:false, timeout:5000, maximumAge:30000}
+        );
+        // Then upgrade silently with high accuracy (cache for 30s)
+        navigator.geolocation.getCurrentPosition(
+            pos=>{
+                latInp.value=pos.coords.latitude.toFixed(6);
+                lngInp.value=pos.coords.longitude.toFixed(6);
+                _gpsReady=true;
+            },
+            ()=>{},
+            {enableHighAccuracy:true, timeout:8000, maximumAge:30000}
+        );
+    }
+
     function getGps(){
         return new Promise(resolve=>{
             if(!navigator.geolocation){resolve(false);return;}
+            // If already prefetched, return immediately
+            if(_gpsReady && latInp.value && lngInp.value){resolve(true);return;}
+            // Otherwise wait with short timeout, allow 30s cache
             navigator.geolocation.getCurrentPosition(
-                pos=>{latInp.value=pos.coords.latitude.toFixed(6);lngInp.value=pos.coords.longitude.toFixed(6);resolve(true);},
-                ()=>resolve(false),{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+                pos=>{
+                    latInp.value=pos.coords.latitude.toFixed(6);
+                    lngInp.value=pos.coords.longitude.toFixed(6);
+                    _gpsReady=true; resolve(true);
+                },
+                ()=>resolve(false),
+                {enableHighAccuracy:false, timeout:5000, maximumAge:30000}
+            );
         });
     }
 
@@ -397,6 +433,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if(isScanning) return; hideMsg();
         try{
             setScanMode(true); isScanning=true; qrStatus.textContent='Requesting camera access…';
+            // Pre-fetch GPS in background while camera starts (parallel)
+            if(NEEDS_GPS) prefetchGps();
             if(!scanner) scanner=new Html5Qrcode('qrReader');
             await scanner.start({facingMode:'environment'},{fps:10,qrbox:{width:220,height:220}},
                 async decoded=>{
@@ -404,7 +442,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     try{await scanner.stop();}catch(e){} isScanning=false;
                     qrStatus.textContent='Processing…';
                     qrTokenInput.value=decoded.trim(); typeInput.value=currentType;
-                    if(NEEDS_GPS){qrStatus.textContent='Getting location…';const ok=await getGps();if(!ok){isSubmitting=false;setScanMode(false);showMsg('Location access denied. Please enable GPS.','error');return;}}
+                    if(NEEDS_GPS){
+                        if(!_gpsReady){qrStatus.textContent='Getting location…';}
+                        const ok=await getGps();
+                        if(!ok){isSubmitting=false;setScanMode(false);showMsg('Location access denied. Please enable GPS.','error');return;}
+                    }
                     qrStatus.textContent='Submitting…'; form.submit();
                 },()=>{});
             qrStatus.textContent='Align QR code within the frame';
@@ -429,11 +471,14 @@ document.addEventListener('DOMContentLoaded', () => {
             (async()=>{
                 if(btnScan.disabled) return; btnScan.disabled=true;
                 if(btnScanSub) btnScanSub.textContent='Locating…';
+                // Pre-fetch already might have filled location
                 const ok=await getGps();
                 if(ok){typeInput.value=currentType;form.submit();}
                 else{btnScan.disabled=false;showMsg('Location access denied.','error');}
             })();
         });
+        // Start prefetching GPS immediately when page loads (GPS-only mode)
+        if(!NEEDS_QR && NEEDS_GPS) prefetchGps();
     }
 });
 </script>
