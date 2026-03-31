@@ -19,8 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Trust all proxies (required for ngrok / reverse-proxy HTTPS tunnels)
-        $middleware->trustProxies(at: '*');
+        // SECURITY UPDATE: Using '*' allows IP spoofing. Configure trusted proxies in environment instead.
+        if (env('TRUSTED_PROXIES')) {
+            $middleware->trustProxies(at: explode(',', env('TRUSTED_PROXIES')));
+        }
 
         $middleware->alias([
             'role'                 => EnsureRole::class,

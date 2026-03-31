@@ -92,7 +92,7 @@ class RegistrationController extends Controller
             ];
 
             try {
-                \Illuminate\Support\Facades\Http::withoutVerifying()->post($url, [
+                \Illuminate\Support\Facades\Http::post($url, [
                     'chat_id' => $chatId,
                     'text' => $message,
                     'parse_mode' => 'Markdown',
@@ -130,7 +130,7 @@ class RegistrationController extends Controller
         if ($botToken) {
             try {
                 $url = "https://api.telegram.org/bot{$botToken}/getUpdates";
-                $response = \Illuminate\Support\Facades\Http::withoutVerifying()->get($url, [
+                $response = \Illuminate\Support\Facades\Http::get($url, [
                     'allowed_updates' => ['callback_query']
                 ]);
                 
@@ -148,7 +148,7 @@ class RegistrationController extends Controller
                                 $paymentRequest->update(['status' => $newStatus]);
                                 
                                 // Acknowledge button click
-                                \Illuminate\Support\Facades\Http::withoutVerifying()->post("https://api.telegram.org/bot{$botToken}/answerCallbackQuery", [
+                                \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$botToken}/answerCallbackQuery", [
                                     'callback_query_id' => $cb['id'],
                                     'text' => "Request " . ucfirst($newStatus) . "!"
                                 ]);
@@ -158,7 +158,7 @@ class RegistrationController extends Controller
                                 $chatId = $cb['message']['chat']['id'] ?? null;
                                 if ($msgId && $chatId) {
                                     $emoji = $newStatus === 'approved' ? '✅' : '❌';
-                                    \Illuminate\Support\Facades\Http::withoutVerifying()->post("https://api.telegram.org/bot{$botToken}/editMessageText", [
+                                    \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$botToken}/editMessageText", [
                                         'chat_id' => $chatId,
                                         'message_id' => $msgId,
                                         'text' => $cb['message']['text'] . "\n\n{$emoji} *Decision:* " . ucfirst($newStatus),
@@ -168,7 +168,7 @@ class RegistrationController extends Controller
 
                                 // Offset the getUpdates so we don't process it again next time
                                 $offsetId = $update['update_id'] + 1;
-                                \Illuminate\Support\Facades\Http::withoutVerifying()->get($url, ['offset' => $offsetId]);
+                                \Illuminate\Support\Facades\Http::get($url, ['offset' => $offsetId]);
 
                                 return response()->json(['status' => $newStatus]);
                             }

@@ -14,7 +14,10 @@ class UpdateEmployeeRequest extends FormRequest
 
     public function rules(): array
     {
-        $userId = $this->route('employee')?->user_id;
+        $employeeParam = $this->route('employee');
+        $userId = $employeeParam instanceof \App\Models\Employee 
+            ? $employeeParam->user_id 
+            : \App\Models\Employee::find($employeeParam)?->user_id;
 
         return [
             'name' => ['required', 'string', 'max:255'],

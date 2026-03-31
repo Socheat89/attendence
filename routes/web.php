@@ -113,6 +113,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/payrolls/{payroll}', [PayrollController::class, 'show'])->name('payrolls.show');
             Route::patch('/payrolls/{payroll}/paid', [PayrollController::class, 'markPaid'])->name('payrolls.paid');
             Route::get('/payrolls/{payroll}/download', [PayrollController::class, 'download'])->name('payrolls.download');
+            Route::delete('/payrolls/{payroll}', [PayrollController::class, 'destroy'])->name('payrolls.destroy');
 
             Route::get('/attendance-qr', [AttendanceQrController::class, 'index'])->name('attendance-qr.index');
             Route::post('/attendance-qr', [AttendanceQrController::class, 'generate'])->name('attendance-qr.generate');

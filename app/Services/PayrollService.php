@@ -13,6 +13,17 @@ class PayrollService
     public function generate(Employee $employee, Carbon $periodStart, Carbon $periodEnd, int $generatedBy): Payroll
     {
         return DB::transaction(function () use ($employee, $periodStart, $periodEnd, $generatedBy): Payroll {
+            // ការពារមិនឱ្យ Generate ជាន់លើ Payroll ដែលបានបើកលុយហើយ (Paid)
+            $existingPayroll = Payroll::query()->where([
+                'employee_id' => $employee->id,
+                'period_start' => $periodStart->toDateString(),
+                'period_end' => $periodEnd->toDateString(),
+            ])->first();
+
+            if ($existingPayroll && $existingPayroll->status === 'paid') {
+                return $existingPayroll; // បញ្ឈប់ការលុបសរសេរជាន់ពីលើ
+            }
+
             $settings = CompanySetting::query()->first();
             $overtimeRate = $employee->ot_rate_per_hour ?: (float) ($settings?->overtime_rate_per_hour ?? 0);
             

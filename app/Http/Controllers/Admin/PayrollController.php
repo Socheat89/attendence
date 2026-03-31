@@ -82,4 +82,12 @@ class PayrollController extends Controller
 
         return $pdf->download('payslip-'.$payroll->employee->employee_id.'-'.$payroll->period_start->format('Ym').'.pdf');
     }
+
+    public function destroy(Payroll $payroll)
+    {
+        $payroll->items()->delete();
+        $payroll->delete();
+
+        return back()->with('status', 'Payroll deleted successfully.');
+    }
 }
