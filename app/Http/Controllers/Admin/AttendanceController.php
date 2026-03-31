@@ -70,6 +70,9 @@ class AttendanceController extends Controller
 
     public function index(Request $request)
     {
+        $date      = $request->input('date', now()->toDateString());
+        $tab       = $request->input('tab', 'all'); // all | late
+        $companyId = auth()->user()->company_id;
 
         $attendanceLogs = AttendanceLog::query()
             ->with(['employee.user', 'employee.branch', 'employee.department', 'attendanceSession'])
