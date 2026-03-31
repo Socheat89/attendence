@@ -28,7 +28,7 @@ class SecurityHeaders
 
         // Force HTTPS for 1 year and include subdomains (production only)
         if (app()->environment('production')) {
-            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
         }
 
         // Stop Referer leakage to external sites
