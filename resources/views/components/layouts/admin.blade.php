@@ -26,6 +26,28 @@
 </head>
 <body class="h-full font-sans antialiased text-slate-600 bg-slate-50" x-data="{ sidebarOpen: false }">
 
+    <!-- Safe Page Loading Overlay -->
+    <div id="global-loader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-50/90 backdrop-blur-sm transition-opacity duration-500">
+        <div class="flex flex-col items-center">
+            <div class="relative w-16 h-16 mb-2">
+                <div class="absolute inset-0 rounded-full border-t-2 border-blue-600 animate-[spin_1s_linear_infinite]"></div>
+                <div class="absolute inset-2 rounded-full border-r-2 border-indigo-400 animate-[spin_1.5s_linear_infinite_reverse]"></div>
+            </div>
+            <p class="mt-4 text-sm text-slate-500 font-medium animate-pulse">Loading...</p>
+        </div>
+    </div>
+    <script>
+        function hideLoader() {
+            var loader = document.getElementById('global-loader');
+            if(loader && loader.style.display !== 'none') {
+                loader.style.opacity = '0';
+                setTimeout(function(){ loader.style.display = 'none'; }, 500);
+            }
+        }
+        window.addEventListener('load', hideLoader);
+        setTimeout(hideLoader, 3000); // Failsafe
+    </script>
+
     <!-- Mobile sidebar backdrop -->
     <div x-show="sidebarOpen" class="fixed inset-0 z-40 bg-slate-900/80 backdrop-blur-sm lg:hidden" 
          x-transition:enter="transition-opacity ease-linear duration-300"
